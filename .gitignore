@@ -146,3 +146,5 @@ TSWLatexianTemp*
 .project
 .clangd
 .clang-format
+#auto_saved_files#
+*.lck
