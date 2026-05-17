@@ -66,7 +66,11 @@ Desarrollado como proyecto de la materia Sistemas Embebidos II de la carrera de 
 | ESP-IDF | v6.0.1 |
 | KiCad | 8.0 |
 | Sistema operativo | Ubuntu 24.04 LTS |
-
+| Compilador | xtensa-esp-elf-gcc 15.2.0 |
+| Python | 3.12.3 |
+| CMake | 3.28.3 |
+| Git | 2.43.0 |
+| IDE | Espressif IDE 4.2.0 |
 ---
 
 ## Instalación
