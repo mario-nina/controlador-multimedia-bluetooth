@@ -142,3 +142,7 @@ TSWLatexianTemp*
 .directory
 .Trash-*
 .nfs*
+.cproject
+.project
+.clangd
+.clang-format

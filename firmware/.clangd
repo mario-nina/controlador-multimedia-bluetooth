@@ -1,3 +1,0 @@
-CompileFlags:
-  CompilationDatabase: /home/mario-nina/repos/controlador-multimedia-bluetooth/firmware/build
-  Remove: [-m*, -f*]
