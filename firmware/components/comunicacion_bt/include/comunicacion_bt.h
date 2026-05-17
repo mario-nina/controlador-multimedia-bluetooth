@@ -1,13 +1,11 @@
 #pragma once
 
 /**
- * @brief Módulo de comunicación Bluetooth HID.
- *
- * Gestiona el stack NimBLE, el perfil HID Consumer Control y la
- * transmisión de reportes multimedia hacia el dispositivo emparejado.
- */
-
-/**
- * @brief Inicializa el módulo de comunicación Bluetooth.
+ * @brief Inicializa el stack NimBLE y comienza advertising BLE.
  */
 void comunicacion_bt_init(void);
+
+/**
+ * @brief Retorna 1 si hay conexión BLE activa, 0 si no.
+ */
+int comunicacion_bt_conectado(void);
