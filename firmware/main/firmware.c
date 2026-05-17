@@ -1,14 +1,10 @@
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/gpio.h"
 #include "control_leds.h"
 #include "driver_entrada.h"
 #include "comunicacion_bt.h"
 #include "gestion_energia.h"
-
-#define LED_AZUL_GPIO   26
-#define BLINK_PERIOD_MS 500
 
 void app_main(void)
 {
@@ -18,21 +14,19 @@ void app_main(void)
     comunicacion_bt_init();
     gestion_energia_init();
 
-    /* Configurar GPIO26 como salida — blink temporal de validación */
-    gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << LED_AZUL_GPIO),
-        .mode         = GPIO_MODE_OUTPUT,
-        .pull_up_en   = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type    = GPIO_INTR_DISABLE,
-    };
-    gpio_config(&io_conf);
+    /* Secuencia de prueba — validación física de GPIO26 y GPIO27 */
+    control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
+    vTaskDelay(pdMS_TO_TICKS(3000));
 
-    /* Blink indefinido */
-    while (1) {
-        gpio_set_level(LED_AZUL_GPIO, 1);
-        vTaskDelay(pdMS_TO_TICKS(BLINK_PERIOD_MS));
-        gpio_set_level(LED_AZUL_GPIO, 0);
-        vTaskDelay(pdMS_TO_TICKS(BLINK_PERIOD_MS));
-    }
+    control_leds_set(LED_AZUL, LED_ENCENDIDO);
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    control_leds_set(LED_ROJO, LED_PARPADEO_LENTO);
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    control_leds_set(LED_ROJO, LED_PARPADEO_RAPIDO);
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    control_leds_set(LED_AZUL, LED_APAGADO);
+    control_leds_set(LED_ROJO, LED_APAGADO);
 }

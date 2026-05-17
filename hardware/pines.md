@@ -18,8 +18,8 @@ validado físicamente mediante pruebas de firmware.
 
 | Pin DevKit | GPIO | Función | Componente | Estado |
 |------------|------|---------|------------|--------|
-| D26 | GPIO26 | LED azul — estado Bluetooth | control_leds | Pendiente |
-| D27 | GPIO27 | LED rojo — estado batería | control_leds | Pendiente |
+| D26 | GPIO26 | LED azul — estado Bluetooth | control_leds | Validado |
+| D27 | GPIO27 | LED rojo — estado batería | control_leds | Validado |
 | D22 | GPIO22 | Botón Next | driver_entrada | Pendiente |
 | D23 | GPIO23 | Botón Previous | driver_entrada | Pendiente |
 | D25 | GPIO25 | Botón Mute | driver_entrada | Pendiente |
