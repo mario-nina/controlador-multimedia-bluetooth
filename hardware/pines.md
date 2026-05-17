@@ -1,62 +1,197 @@
-# Asignación de pines — ESP32 DevKit 30 pines
+# Asignación de pines — ESP32 WROOM-32 DevKit 30 pines
 
-Tabla de asignación de pines del proyecto. El estado indica si el pin fue
-validado físicamente mediante pruebas de firmware.
+Documento de referencia para el proyecto **Controlador Multimedia Bluetooth**.
+Registra los pines utilizados, su justificación técnica, restricciones del
+microcontrolador, y criterios para selección de pines alternativos.
 
-## Estados
+Última actualización: mayo 2026
 
-| Estado | Descripción |
-|--------|-------------|
-| Pendiente | Asignado pero no validado físicamente aún |
-| Validado | Confirmado mediante prueba física de firmware |
-| Reservado | Uso interno del chip — nunca usar |
-| Precaución | Strapping pin — usar con cuidado |
+---
+
+## Tabla de contenidos
+
+- [Pines utilizados](#pines-utilizados)
+- [Restricciones del ESP32 WROOM-32](#restricciones-del-esp32-wroom-32)
+- [Pines disponibles para expansión](#pines-disponibles-para-expansión)
+- [Criterios de selección](#criterios-de-selección)
+- [Referencia de periféricos internos](#referencia-de-periféricos-internos)
 
 ---
 
 ## Pines utilizados
 
-| Pin DevKit | GPIO | Función | Componente | Estado |
-|------------|------|---------|------------|--------|
-| D26 | GPIO26 | LED azul — estado Bluetooth | control_leds | Validado |
-| D27 | GPIO27 | LED rojo — estado batería | control_leds | Validado |
-| D22 | GPIO22 | Botón Next | driver_entrada | Validado |
-| D23 | GPIO23 | Botón Previous | driver_entrada | Validado |
-| D25 | GPIO25 | Botón Mute | driver_entrada | Validado |
-| D18 | GPIO18 | Encoder CLK | driver_entrada | Pendiente |
-| D19 | GPIO19 | Encoder DT | driver_entrada | Pendiente |
-| D21 | GPIO21 | Encoder SW (Play/Pause) | driver_entrada | Pendiente |
-| D34 | GPIO34 | Lectura ADC batería | gestion_energia | Pendiente |
+### Indicadores visuales
 
-## Pines de alimentación
+| GPIO | Pin DevKit | Función | Periférico | Dirección | Pull | Estado |
+|------|------------|---------|------------|-----------|------|--------|
+| 26 | D26 | LED azul — estado Bluetooth | GPIO | Salida | — | ✓ Validado |
+| 27 | D27 | LED rojo — estado batería | GPIO | Salida | — | ✓ Validado |
 
-| Pin DevKit | Función |
-|------------|---------|
-| 3V3 | Salida 3.3V — alimentación del circuito |
-| GND | Tierra |
-| VIN | Entrada 5V desde USB (no usado en diseño final) |
+**Notas:**
+- Resistencia de 330Ω en serie con cada LED hacia GND.
+- GPIO26 y GPIO27 son de propósito general sin restricciones especiales.
+- Ambos pines validados físicamente en Fase 3.
 
-## Pines reservados — nunca usar
-
-| GPIO | Razón |
-|------|-------|
-| GPIO6 | Flash interno SPI |
-| GPIO7 | Flash interno SPI |
-| GPIO8 | Flash interno SPI |
-| GPIO9 | Flash interno SPI |
-| GPIO10 | Flash interno SPI |
-| GPIO11 | Flash interno SPI |
-
-## Pines con precaución
-
-| GPIO | Razón |
-|------|-------|
-| GPIO0 | Strapping pin — pull-up interno, afecta modo de boot |
-| GPIO2 | Strapping pin — pull-down interno |
-| GPIO5 | Strapping pin — pull-up interno |
-| GPIO12 | Strapping pin — pull-down interno, afecta voltaje flash |
-| GPIO15 | Strapping pin — pull-up interno |
+**Pines alternativos aceptables para LEDs:** GPIO4, GPIO5\*, GPIO13, GPIO14, GPIO15\*, GPIO16, GPIO17, GPIO32, GPIO33.
 
 ---
 
-*Última actualización: Fase 4 — driver de botones*
+### Botones
+
+| GPIO | Pin DevKit | Función | Periférico | Dirección | Pull | Estado |
+|------|------------|---------|------------|-----------|------|--------|
+| 22 | D22 | Botón Next | GPIO + ISR | Entrada | Pull-up interno | ✓ Validado |
+| 23 | D23 | Botón Previous | GPIO + ISR | Entrada | Pull-up interno | ✓ Validado |
+| 25 | D25 | Botón Mute | GPIO + ISR | Entrada | Pull-up interno | ✓ Validado |
+
+**Notas:**
+- Configurados con `GPIO_INTR_NEGEDGE` — interrupción en flanco de bajada.
+- Pull-up interno del ESP32 (~45kΩ) es suficiente para pulsadores táctiles. No se requieren resistencias externas.
+- Debouncing implementado por software mediante timestamp con umbral de 50ms.
+- Los tres pines validados físicamente sin rebotes en Fase 4.
+
+**Pines alternativos aceptables para botones:** cualquier GPIO de propósito general con soporte de interrupción: GPIO4, GPIO13, GPIO14, GPIO16, GPIO17, GPIO32, GPIO33. Evitar GPIO34-39 para botones porque son solo entrada y algunos no tienen pull-up interno.
+
+---
+
+### Encoder rotativo EC11
+
+| GPIO | Pin DevKit | Función | Periférico | Dirección | Pull | Estado |
+|------|------------|---------|------------|-----------|------|--------|
+| 18 | D18 | Encoder CLK (canal A) | PCNT canal A edge | Entrada | Pull-up manual | ✓ Validado |
+| 19 | D19 | Encoder DT (canal B) | PCNT canal A level / canal B edge | Entrada | Pull-up manual | ✓ Validado |
+| 21 | D21 | Encoder SW (pulsador) | GPIO + ISR | Entrada | Pull-up interno | ✓ Validado |
+
+**Notas:**
+- GPIO18 y GPIO19 son los pines recomendados para PCNT porque soportan todos los periféricos de alta velocidad.
+- El periférico PCNT no configura pull-ups automáticamente — se aplican manualmente con `gpio_set_pull_mode()`.
+- Filtro de glitches del PCNT configurado en 10µs (`max_glitch_ns = 10000`) para suprimir ruido mecánico del EC11.
+- Watch points en ±2 — genera un evento por cada 2 flancos de cuadratura (un evento por detent físico).
+- Dirección CW → `EVT_VOL_SUBIR`, CCW → `EVT_VOL_BAJAR`. Validado físicamente en Fase 5.
+- Debouncing de dirección en callback PCNT: cambios de dirección en menos de 50ms se descartan.
+
+**Pines alternativos aceptables para PCNT:** GPIO18/GPIO19 son la primera opción. Alternativas: GPIO32/GPIO33 (soportan PCNT), GPIO4/GPIO13. Evitar GPIO34-39 para CLK/DT porque son solo entrada y el PCNT necesita pines bidireccionales para algunos modos.
+
+---
+
+### Sistema de alimentación
+
+| GPIO | Pin DevKit | Función | Periférico | Dirección | Pull | Estado |
+|------|------------|---------|------------|-----------|------|--------|
+| 34 | D34 | ADC batería (divisor resistivo) | ADC1 canal 6 | Entrada analógica | — | Pendiente (Fase 10) |
+
+**Notas:**
+- GPIO34 es entrada exclusiva — no puede configurarse como salida.
+- Usar obligatoriamente ADC1 (GPIO32-GPIO39) para lectura de batería. ADC2 es incompatible con BLE activo.
+- Divisor resistivo: 100kΩ desde VBAT+ → nodo → 100kΩ → GND. El nodo central conecta a GPIO34.
+- Atenuación: `ADC_ATTEN_DB_11` para rango 0–3.3V.
+
+**Pines alternativos aceptables para ADC batería:** GPIO32, GPIO33, GPIO35, GPIO36, GPIO39 — todos pertenecen a ADC1 y son compatibles con BLE activo. GPIO35-39 son solo entrada, lo cual es adecuado para ADC.
+
+---
+
+## Restricciones del ESP32 WROOM-32
+
+### Pines reservados — nunca usar
+
+| GPIO | Razón |
+|------|-------|
+| GPIO6 | Bus SPI flash interno (CLK) |
+| GPIO7 | Bus SPI flash interno (SD0/MISO) |
+| GPIO8 | Bus SPI flash interno (SD1/MOSI) |
+| GPIO9 | Bus SPI flash interno (SD2) |
+| GPIO10 | Bus SPI flash interno (SD3) |
+| GPIO11 | Bus SPI flash interno (CMD) |
+
+Usar cualquiera de estos pines causa comportamiento indefinido o fallo de arranque del chip.
+
+---
+
+### Pines de strapping — precaución en boot
+
+| GPIO | Función de strapping | Estado seguro en operación |
+|------|---------------------|---------------------------|
+| GPIO0 | Boot mode (LOW = flash, HIGH = normal) | Libre tras arranque, evitar cargas que lo mantengan en LOW |
+| GPIO2 | Debe estar en LOW o flotante durante flash | Libre tras arranque |
+| GPIO5 | SDIO timing | Libre tras arranque, tiene pull-up interno |
+| GPIO12 | VDD_SDIO voltage (HIGH = 1.8V, LOW = 3.3V) | Mantener en LOW o flotante — crítico para alimentación |
+| GPIO15 | MTDO / silencia mensajes de boot en LOW | Libre tras arranque |
+
+**Regla práctica:** estos pines pueden usarse en operación normal, pero no conectar resistencias de pull-down en GPIO12 ni elementos que fuercen GPIO0 a LOW permanentemente.
+
+---
+
+### ADC2 — incompatible con BLE/WiFi
+
+Los siguientes pines pertenecen a ADC2 y **no pueden usarse para lectura analógica mientras BLE esté activo:**
+
+GPIO0, GPIO2, GPIO4, GPIO12, GPIO13, GPIO14, GPIO15, GPIO25, GPIO26, GPIO27.
+
+Para lectura analógica con BLE activo, usar exclusivamente ADC1: GPIO32-GPIO39.
+
+---
+
+### GPIO34-GPIO39 — solo entrada
+
+| GPIO | Nota |
+|------|------|
+| GPIO34 | Solo entrada, sin pull-up/pull-down interno |
+| GPIO35 | Solo entrada, sin pull-up/pull-down interno |
+| GPIO36 (VP) | Solo entrada, sin pull-up/pull-down interno |
+| GPIO39 (VN) | Solo entrada, sin pull-up/pull-down interno |
+
+No pueden configurarse como salida. Adecuados para ADC1 y señales de entrada que no requieran pull-up interno.
+
+---
+
+## Pines disponibles para expansión
+
+Pines no utilizados en el diseño actual, libres para funciones futuras:
+
+| GPIO | Observaciones |
+|------|---------------|
+| GPIO4 | Propósito general, soporta ADC2 (no usar con BLE), touch |
+| GPIO13 | Propósito general, soporta ADC2 (no usar con BLE), touch |
+| GPIO14 | Propósito general, soporta ADC2 (no usar con BLE), touch |
+| GPIO16 | Propósito general, sin restricciones relevantes |
+| GPIO17 | Propósito general, sin restricciones relevantes |
+| GPIO32 | Propósito general, ADC1 canal 4, touch |
+| GPIO33 | Propósito general, ADC1 canal 5, touch |
+| GPIO35 | Solo entrada, ADC1 canal 7 |
+| GPIO36 (VP) | Solo entrada, ADC1 canal 0 |
+| GPIO39 (VN) | Solo entrada, ADC1 canal 3 |
+
+GPIO1 (TX0) y GPIO3 (RX0) están en uso por la UART de consola/monitor serie durante desarrollo. No usar para funciones de aplicación.
+
+---
+
+## Criterios de selección
+
+Los pines del proyecto se seleccionaron siguiendo estos criterios en orden de prioridad:
+
+1. **Compatibilidad con BLE activo** — evitar ADC2 para señales analógicas; verificar que los pines no interfieren con el stack Bluetooth.
+
+2. **Periférico hardware dedicado** — preferir pines que permiten usar periféricos de hardware (PCNT para encoder, ADC1 para batería) en lugar de implementaciones por software, para mayor precisión y menor carga del CPU.
+
+3. **Ausencia de funciones de strapping** — evitar pines que afectan el comportamiento de arranque del chip para simplificar el diseño del PCB.
+
+4. **Validación física incremental** — cada pin se confirmó funcionando en hardware físico antes de comprometerse en el esquemático KiCad, siguiendo la metodología de desarrollo del proyecto.
+
+5. **Separación funcional** — agrupar pines por subsistema (LEDs juntos, botones juntos, encoder juntos) para facilitar el ruteo en PCB y la lectura del esquemático.
+
+---
+
+## Referencia de periféricos internos
+
+| Periférico | Usado para | Pines asignados |
+|------------|------------|-----------------|
+| GPIO + ISR | Botones y pulsador encoder | GPIO21, GPIO22, GPIO23, GPIO25 |
+| GPIO salida | LEDs indicadores | GPIO26, GPIO27 |
+| PCNT unidad 0 | Decodificación cuadratura encoder | GPIO18 (CLK), GPIO19 (DT) |
+| ADC1 canal 6 | Monitoreo voltaje batería | GPIO34 |
+| UART0 | Monitor serie (desarrollo) | GPIO1 (TX), GPIO3 (RX) |
+
+---
+
+*Proyecto: Controlador Multimedia Bluetooth — Sistemas Embebidos II*
+*Universidad Católica Boliviana — Ingeniería Mecatrónica*
