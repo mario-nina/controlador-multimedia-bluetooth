@@ -2,13 +2,23 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
+#include "control_leds.h"
+#include "driver_entrada.h"
+#include "comunicacion_bt.h"
+#include "gestion_energia.h"
 
-#define LED_AZUL_GPIO 26
+#define LED_AZUL_GPIO   26
 #define BLINK_PERIOD_MS 500
 
 void app_main(void)
 {
-    /* Configurar GPIO26 como salida */
+    /* Inicializar módulos del sistema */
+    control_leds_init();
+    driver_entrada_init();
+    comunicacion_bt_init();
+    gestion_energia_init();
+
+    /* Configurar GPIO26 como salida — blink temporal de validación */
     gpio_config_t io_conf = {
         .pin_bit_mask = (1ULL << LED_AZUL_GPIO),
         .mode         = GPIO_MODE_OUTPUT,
