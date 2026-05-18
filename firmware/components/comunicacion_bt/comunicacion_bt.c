@@ -1,4 +1,5 @@
 #include "comunicacion_bt.h"
+#include "hid.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "nimble/nimble_port.h"
@@ -11,8 +12,10 @@ static const char *TAG = "comunicacion_bt";
 
 #define NOMBRE_DISPOSITIVO "Controlador Multimedia"
 
-static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
-static int bt_conectado = 0;
+/* --- Variables estáticas --- */
+static uint16_t conn_handle                  = BLE_HS_CONN_HANDLE_NONE;
+static int bt_conectado                      = 0;
+static void (*callback_estado)(int conectado) = NULL;
 
 /* --- Prototipos internos --- */
 static void iniciar_advertising(void);
@@ -29,6 +32,7 @@ static int callback_gap(struct ble_gap_event *event, void *arg)
                 conn_handle = event->connect.conn_handle;
                 bt_conectado = 1;
                 ESP_LOGI(TAG, "Dispositivo conectado — handle: %d", conn_handle);
+                if (callback_estado) callback_estado(1);
             } else {
                 ESP_LOGW(TAG, "Conexión fallida — reiniciando advertising");
                 bt_conectado = 0;
@@ -40,8 +44,15 @@ static int callback_gap(struct ble_gap_event *event, void *arg)
             conn_handle = BLE_HS_CONN_HANDLE_NONE;
             bt_conectado = 0;
             ESP_LOGI(TAG, "Dispositivo desconectado — reiniciando advertising");
+            if (callback_estado) callback_estado(0);
             iniciar_advertising();
             break;
+			
+		case BLE_GAP_EVENT_SUBSCRIBE:
+		    ESP_LOGI(TAG, "Suscripción — handle:%d notify:%d",
+		             event->subscribe.attr_handle,
+		             event->subscribe.cur_notify);
+		    break;
 
         default:
             break;
@@ -56,12 +67,14 @@ static int callback_gap(struct ble_gap_event *event, void *arg)
 static void iniciar_advertising(void)
 {
     struct ble_gap_adv_params params = {0};
-    struct ble_hs_adv_fields fields = {0};
+    struct ble_hs_adv_fields fields  = {0};
 
-    fields.flags = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
-    fields.name = (uint8_t *)NOMBRE_DISPOSITIVO;
-    fields.name_len = strlen(NOMBRE_DISPOSITIVO);
-    fields.name_is_complete = 1;
+    fields.flags               = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
+    fields.name                = (uint8_t *)NOMBRE_DISPOSITIVO;
+    fields.name_len            = strlen(NOMBRE_DISPOSITIVO);
+    fields.name_is_complete    = 1;
+    fields.appearance          = 0x03C4;
+    fields.appearance_is_present = 1;
 
     ble_gap_adv_set_fields(&fields);
 
@@ -98,7 +111,6 @@ static void tarea_host_nimble(void *param)
 
 void comunicacion_bt_init(void)
 {
-    /* NVS requerido para guardar claves de bonding */
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
         ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -111,6 +123,7 @@ void comunicacion_bt_init(void)
     ble_hs_cfg.sync_cb = on_stack_listo;
 
     ble_svc_gap_device_name_set(NOMBRE_DISPOSITIVO);
+    hid_init();
 
     nimble_port_freertos_init(tarea_host_nimble);
 
@@ -120,4 +133,14 @@ void comunicacion_bt_init(void)
 int comunicacion_bt_conectado(void)
 {
     return bt_conectado;
+}
+
+uint16_t comunicacion_bt_get_conn_handle(void)
+{
+    return conn_handle;
+}
+
+void comunicacion_bt_set_callback_estado(void (*callback)(int conectado))
+{
+    callback_estado = callback;
 }
