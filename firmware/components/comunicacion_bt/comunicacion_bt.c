@@ -13,9 +13,9 @@ static const char *TAG = "comunicacion_bt";
 #define NOMBRE_DISPOSITIVO "Controlador Multimedia"
 
 /* --- Variables estáticas --- */
-static uint16_t conn_handle                  = BLE_HS_CONN_HANDLE_NONE;
-static int bt_conectado                      = 0;
-static void (*callback_estado)(int conectado) = NULL;
+static uint16_t conn_handle                   = BLE_HS_CONN_HANDLE_NONE;
+static int      bt_conectado                  = 0;
+static void   (*callback_estado)(int conectado) = NULL;
 
 /* --- Prototipos internos --- */
 static void iniciar_advertising(void);
@@ -27,32 +27,39 @@ static int callback_gap(struct ble_gap_event *event, void *arg)
 {
     switch (event->type) {
 
-        case BLE_GAP_EVENT_CONNECT:
-            if (event->connect.status == 0) {
-                conn_handle = event->connect.conn_handle;
-                bt_conectado = 1;
-                ESP_LOGI(TAG, "Dispositivo conectado — handle: %d", conn_handle);
-                if (callback_estado) callback_estado(1);
-            } else {
-                ESP_LOGW(TAG, "Conexión fallida — reiniciando advertising");
-                bt_conectado = 0;
-                iniciar_advertising();
-            }
-            break;
+		case BLE_GAP_EVENT_CONNECT:
+		    if (event->connect.status == 0) {
+		        conn_handle = event->connect.conn_handle;
+		        bt_conectado = 1;
+		        hid_set_notificaciones(1);  /* Activar al conectar */
+		        ESP_LOGI(TAG, "Dispositivo conectado — handle: %d", conn_handle);
+		        if (callback_estado) callback_estado(1);
+		    } else {
+		        ESP_LOGW(TAG, "Conexión fallida — reiniciando advertising");
+		        bt_conectado = 0;
+		        iniciar_advertising();
+		    }
+		    break;
 
         case BLE_GAP_EVENT_DISCONNECT:
             conn_handle = BLE_HS_CONN_HANDLE_NONE;
             bt_conectado = 0;
+            hid_set_notificaciones(0);
             ESP_LOGI(TAG, "Dispositivo desconectado — reiniciando advertising");
             if (callback_estado) callback_estado(0);
             iniciar_advertising();
             break;
-			
-		case BLE_GAP_EVENT_SUBSCRIBE:
-		    ESP_LOGI(TAG, "Suscripción — handle:%d notify:%d",
-		             event->subscribe.attr_handle,
-		             event->subscribe.cur_notify);
-		    break;
+
+        case BLE_GAP_EVENT_SUBSCRIBE:
+            ESP_LOGI(TAG, "Suscripción — handle:%d notify:%d",
+                     event->subscribe.attr_handle,
+                     event->subscribe.cur_notify);
+            hid_set_notificaciones(event->subscribe.cur_notify);
+            break;
+
+        case BLE_GAP_EVENT_MTU:
+            ESP_LOGI(TAG, "MTU negociado: %d", event->mtu.value);
+            break;
 
         default:
             break;
@@ -69,11 +76,11 @@ static void iniciar_advertising(void)
     struct ble_gap_adv_params params = {0};
     struct ble_hs_adv_fields fields  = {0};
 
-    fields.flags               = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
-    fields.name                = (uint8_t *)NOMBRE_DISPOSITIVO;
-    fields.name_len            = strlen(NOMBRE_DISPOSITIVO);
-    fields.name_is_complete    = 1;
-    fields.appearance          = 0x03C4;
+    fields.flags                = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
+    fields.name                 = (uint8_t *)NOMBRE_DISPOSITIVO;
+    fields.name_len             = strlen(NOMBRE_DISPOSITIVO);
+    fields.name_is_complete     = 1;
+    fields.appearance           = 0x03C4;
     fields.appearance_is_present = 1;
 
     ble_gap_adv_set_fields(&fields);

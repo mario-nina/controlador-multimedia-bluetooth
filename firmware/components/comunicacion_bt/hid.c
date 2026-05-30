@@ -5,7 +5,8 @@
 
 static const char *TAG = "hid";
 
-static uint16_t hid_report_handle = 0;
+static uint16_t hid_report_handle     = 0;
+static int      notificaciones_activas = 0;
 
 static const uint8_t hid_descriptor[] __attribute__((used)) = {
     0x05, 0x0C,
@@ -86,6 +87,21 @@ static int callback_protocol_mode(uint16_t conn_handle, uint16_t attr_handle,
     return 0;
 }
 
+/**
+ * @brief Callback de lectura para PnP ID — Device Information Service.
+ */
+static int callback_pnp_id(uint16_t conn_handle, uint16_t attr_handle,
+                             struct ble_gatt_access_ctxt *ctxt, void *arg)
+{
+    static const uint8_t pnp[] = {
+        0x02,        /* Vendor ID source: USB */
+        0xE5, 0x02,  /* Vendor ID: Espressif (0x02E5) */
+        0x00, 0x00,  /* Product ID */
+        0x00, 0x01,  /* Product version */
+    };
+    return os_mbuf_append(ctxt->om, pnp, sizeof(pnp));
+}
+
 static struct ble_gatt_dsc_def hid_report_dscs[] = {
     {
         .uuid      = BLE_UUID16_DECLARE(0x2908),
@@ -97,6 +113,7 @@ static struct ble_gatt_dsc_def hid_report_dscs[] = {
 
 static const struct ble_gatt_svc_def hid_gatt_svcs[] = {
     {
+        /* HID Service */
         .type = BLE_GATT_SVC_TYPE_PRIMARY,
         .uuid = BLE_UUID16_DECLARE(0x1812),
         .characteristics = (struct ble_gatt_chr_def[]) {
@@ -135,6 +152,20 @@ static const struct ble_gatt_svc_def hid_gatt_svcs[] = {
             { 0 }
         },
     },
+    {
+        /* Device Information Service */
+        .type = BLE_GATT_SVC_TYPE_PRIMARY,
+        .uuid = BLE_UUID16_DECLARE(0x180A),
+        .characteristics = (struct ble_gatt_chr_def[]) {
+            {
+                /* PnP ID */
+                .uuid      = BLE_UUID16_DECLARE(0x2A50),
+                .access_cb = callback_pnp_id,
+                .flags     = BLE_GATT_CHR_F_READ,
+            },
+            { 0 }
+        },
+    },
     { 0 }
 };
 
@@ -145,10 +176,21 @@ void hid_init(void)
     ESP_LOGI(TAG, "Servicio HID Consumer Control registrado");
 }
 
+void hid_set_notificaciones(int activas)
+{
+    notificaciones_activas = activas;
+    ESP_LOGI(TAG, "Notificaciones: %s", activas ? "activas" : "inactivas");
+}
+
 void hid_send_report(uint16_t usage_id, uint16_t conn_handle)
 {
     if (hid_report_handle == 0) {
         ESP_LOGW(TAG, "Handle HID no inicializado");
+        return;
+    }
+
+    if (!notificaciones_activas) {
+        ESP_LOGW(TAG, "Reporte descartado — notificaciones no activas");
         return;
     }
 
