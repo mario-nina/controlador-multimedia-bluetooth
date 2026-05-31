@@ -1,18 +1,23 @@
+/**
+ * @file pines.h
+ * @brief Mapa centralizado de asignación de pines GPIO del sistema.
+ */
+
 #pragma once
 
-/** @brief GPIOs de entrada — botones */
-#define PIN_BOTON_NEXT  22
-#define PIN_BOTON_PREV  23
-#define PIN_BOTON_MUTE  25
+/* Botones */
+#define PIN_BOTON_NEXT   22  /**< Siguiente pista */
+#define PIN_BOTON_PREV   23  /**< Pista anterior */
+#define PIN_BOTON_MUTE   25  /**< Silenciar */
 
-/** @brief GPIOs de entrada — encoder rotativo EC11 */
-#define PIN_ENCODER_CLK  18
-#define PIN_ENCODER_DT   19
-#define PIN_ENCODER_SW   21
+/* Encoder rotativo EC11 */
+#define PIN_ENCODER_CLK  18  /**< Señal de reloj */
+#define PIN_ENCODER_DT   19  /**< Señal de datos */
+#define PIN_ENCODER_SW   21  /**< Pulsador del encoder */
 
-/** @brief GPIOs de salida — LEDs */
-#define PIN_LED_AZUL  26
-#define PIN_LED_ROJO  27
+/* LEDs de estado */
+#define PIN_LED_AZUL     26  /**< Estado Bluetooth */
+#define PIN_LED_ROJO     27  /**< Estado batería */
 
-/** @brief GPIO de entrada analógica — divisor de batería */
-#define PIN_ADC_BATERIA  34
+/* ADC */
+#define PIN_ADC_BATERIA  34  /**< Divisor resistivo de batería */

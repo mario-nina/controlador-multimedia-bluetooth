@@ -1,29 +1,41 @@
+/**
+ * @file comunicacion_bt.h
+ * @brief Interfaz pública del módulo de comunicación Bluetooth BLE HID.
+ */
+
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /**
  * @brief Inicializa el stack NimBLE y comienza advertising BLE.
  *
- * @note NVS Flash debe inicializarse antes de llamar esta función.
+ * @pre nvs_flash_init() debe haberse llamado exitosamente antes.
  */
 void comunicacion_bt_init(void);
 
 /**
- * @brief Retorna 1 si hay conexión BLE activa, 0 si no.
+ * @brief Indica si hay una conexión BLE activa.
+ *
+ * @return true si hay conexión activa, false si no.
  */
-int comunicacion_bt_conectado(void);
+bool comunicacion_bt_conectado(void);
 
 /**
- * @brief Envía un uso HID Consumer Control al dispositivo conectado.
+ * @brief Envía un código de uso HID Consumer Control al dispositivo conectado.
+ *
+ * Si no hay conexión activa el comando se descarta silenciosamente.
  *
  * @param hid_uso Código de uso HID (ej. 0x00CD para Play/Pause).
  */
 void comunicacion_bt_enviar_uso(uint16_t hid_uso);
 
 /**
- * @brief Registra un callback que se llama cuando cambia el estado de conexión.
+ * @brief Registra un callback invocado cuando cambia el estado de conexión.
  *
- * @param callback Función que recibe 1 al conectar, 0 al desconectar.
+ * El callback se llama desde el contexto de la tarea NimBLE.
+ *
+ * @param callback Función que recibe true al conectar, false al desconectar.
  */
-void comunicacion_bt_set_callback_estado(void (*callback)(int conectado));
+void comunicacion_bt_set_callback_estado(void (*callback)(bool conectado));

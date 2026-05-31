@@ -1,5 +1,11 @@
+/**
+ * @file encoder.c
+ * @brief Implementación del driver de encoder rotativo EC11 mediante PCNT.
+ */
+
 #include "encoder.h"
 #include "driver_entrada.h"
+#include "pines.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "driver/gpio.h"
@@ -7,30 +13,37 @@
 
 static const char *TAG = "encoder";
 
-static QueueHandle_t cola_eventos = NULL;
 static pcnt_unit_handle_t pcnt_unit = NULL;
 
+/** @brief Intervalo mínimo entre pulsos válidos del encoder en µs */
+#define ENCODER_DEBOUNCE_US  50000UL
+
+/**
+ * @brief Callback del PCNT — dispara al alcanzar un watch point.
+ *
+ * ultimo_valor y ultimo_tiempo son estáticos para mantener estado
+ * entre llamadas sucesivas del callback.
+ */
 static bool callback_pcnt(pcnt_unit_handle_t unit,
                            const pcnt_watch_event_data_t *edata,
                            void *user_ctx)
 {
-    static volatile int      ultimo_valor  = 0;
-    static volatile int64_t  ultimo_tiempo = 0;
+    static volatile int     ultimo_valor  = 0;
+    static volatile int64_t ultimo_tiempo = 0;
 
     int64_t ahora = esp_timer_get_time();
-    int valor = edata->watch_point_value;
+    int     valor = edata->watch_point_value;
 
-    if ((valor != ultimo_valor) && ((ahora - ultimo_tiempo) < 50000)) {
+    if ((valor != ultimo_valor) && ((ahora - ultimo_tiempo) < ENCODER_DEBOUNCE_US)) {
         return pdFALSE;
     }
 
     ultimo_valor  = valor;
     ultimo_tiempo = ahora;
 
-    BaseType_t debe_cambiar_contexto = pdFALSE;
-    QueueHandle_t cola = (QueueHandle_t)user_ctx;
-
-    evento_entrada_t evento = (valor > 0) ? EVT_VOL_SUBIR : EVT_VOL_BAJAR;
+    QueueHandle_t     cola                = (QueueHandle_t)user_ctx;
+    evento_entrada_t  evento              = (valor > 0) ? EVT_VOL_SUBIR : EVT_VOL_BAJAR;
+    BaseType_t        debe_cambiar_contexto = pdFALSE;
 
     xQueueSendFromISR(cola, &evento, &debe_cambiar_contexto);
     return (debe_cambiar_contexto == pdTRUE);
@@ -38,10 +51,8 @@ static bool callback_pcnt(pcnt_unit_handle_t unit,
 
 void encoder_init(QueueHandle_t cola)
 {
-    cola_eventos = cola;
-
-    gpio_set_pull_mode(PIN_ENCODER_CLK, GPIO_PULLUP_ONLY);
-    gpio_set_pull_mode(PIN_ENCODER_DT,  GPIO_PULLUP_ONLY);
+    ESP_ERROR_CHECK(gpio_set_pull_mode(PIN_ENCODER_CLK, GPIO_PULLUP_ONLY));
+    ESP_ERROR_CHECK(gpio_set_pull_mode(PIN_ENCODER_DT,  GPIO_PULLUP_ONLY));
 
     pcnt_unit_config_t unit_config = {
         .high_limit =  2,
@@ -88,7 +99,7 @@ void encoder_init(QueueHandle_t cola)
     pcnt_event_callbacks_t cbs = {
         .on_reach = callback_pcnt,
     };
-    ESP_ERROR_CHECK(pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, cola_eventos));
+    ESP_ERROR_CHECK(pcnt_unit_register_event_callbacks(pcnt_unit, &cbs, cola));
 
     ESP_ERROR_CHECK(pcnt_unit_enable(pcnt_unit));
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));

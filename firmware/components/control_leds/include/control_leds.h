@@ -1,27 +1,37 @@
+/**
+ * @file control_leds.h
+ * @brief Control de LEDs de estado del sistema mediante patrones de iluminación.
+ */
+
 #pragma once
 
 #include "pines.h"
-#include "driver/gpio.h"
 
-#define LED_PERIODO_RAPIDO_US   200000UL
-#define LED_PERIODO_LENTO_US   1000000UL
+#define LED_PERIODO_RAPIDO_US   200000UL   /**< Período de parpadeo rápido: 200ms */
+#define LED_PERIODO_LENTO_US   1000000UL   /**< Período de parpadeo lento: 1000ms */
 
+/**
+ * @brief Identificadores de los LEDs del sistema.
+ */
 typedef enum {
-    LED_AZUL = PIN_LED_AZUL,
-    LED_ROJO = PIN_LED_ROJO
+    LED_AZUL = PIN_LED_AZUL,  /**< LED de estado Bluetooth */
+    LED_ROJO = PIN_LED_ROJO   /**< LED de estado batería   */
 } led_id_t;
 
+/**
+ * @brief Patrones de iluminación disponibles.
+ */
 typedef enum {
-    LED_APAGADO,
-    LED_ENCENDIDO,
-    LED_PARPADEO_RAPIDO,
-    LED_PARPADEO_LENTO
+    LED_APAGADO,         /**< Apagado permanentemente  */
+    LED_ENCENDIDO,       /**< Encendido permanentemente */
+    LED_PARPADEO_RAPIDO, /**< Parpadeo cada 200ms       */
+    LED_PARPADEO_LENTO   /**< Parpadeo cada 1000ms      */
 } led_patron_t;
 
 /**
  * @brief Inicializa el módulo de control de LEDs.
  *
- * Configura GPIO26 y GPIO27 como salidas digitales.
+ * Configura PIN_LED_AZUL y PIN_LED_ROJO como salidas digitales.
  * Ambos LEDs inician apagados.
  */
 void control_leds_init(void);

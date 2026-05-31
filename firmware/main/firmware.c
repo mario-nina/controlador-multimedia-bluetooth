@@ -1,3 +1,8 @@
+/**
+ * @file firmware.c
+ * @brief Aplicación principal — coordina subsistemas y máquina de estados.
+ */
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
@@ -12,19 +17,29 @@
 
 static const char *TAG = "firmware";
 
-/* --- Prioridades de tareas --- */
-#define TAREA_PRIO_INPUT    5
-#define TAREA_PRIO_CMD      4
+/* Prioridades de tareas */
+#define TAREA_PRIO_INPUT  5
+#define TAREA_PRIO_CMD    4
 
-/* --- Máquina de estados del sistema --- */
+/* Códigos de uso HID Consumer Control */
+#define HID_PLAY_PAUSE  0x00CD  /**< Reproducir / Pausar      */
+#define HID_SIGUIENTE   0x00B5  /**< Siguiente pista           */
+#define HID_ANTERIOR    0x00B6  /**< Pista anterior            */
+#define HID_SILENCIAR   0x00E2  /**< Silenciar / Activar audio */
+#define HID_VOL_SUBIR   0x00E9  /**< Subir volumen             */
+#define HID_VOL_BAJAR   0x00EA  /**< Bajar volumen             */
+
+/**
+ * @brief Estados operativos del sistema.
+ */
 typedef enum {
-    SYS_ADVERTISING,
-    SYS_CONNECTED,
-    SYS_SLEEPING,
+    SYS_ADVERTISING, /**< Sin conexión BLE — anunciando  */
+    SYS_CONNECTED,   /**< Conexión BLE activa             */
 } sys_state_t;
 
 static sys_state_t       estado_sistema = SYS_ADVERTISING;
 static SemaphoreHandle_t mutex_estado   = NULL;
+static QueueHandle_t     cola_comandos  = NULL;
 
 static sys_state_t sys_get_state(void)
 {
@@ -42,9 +57,6 @@ static void sys_set_state(sys_state_t nuevo_estado)
     xSemaphoreGive(mutex_estado);
 }
 
-/* --- Cola de comandos --- */
-static QueueHandle_t cola_comandos = NULL;
-
 /**
  * @brief Actualiza los LEDs según el estado BT y el nivel de batería.
  *
@@ -52,18 +64,11 @@ static QueueHandle_t cola_comandos = NULL;
  */
 static void actualizar_leds(void)
 {
-    sys_state_t    estado  = sys_get_state();
-    nivel_bateria_t nivel  = gestion_energia_get_nivel();
-    int conectado          = (estado == SYS_CONNECTED);
+    bool            conectado = (sys_get_state() == SYS_CONNECTED);
+    nivel_bateria_t nivel     = gestion_energia_get_nivel();
 
-    /* LED azul — estado Bluetooth */
-    if (conectado) {
-        control_leds_set(LED_AZUL, LED_APAGADO);
-    } else {
-        control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
-    }
+    control_leds_set(LED_AZUL, conectado ? LED_APAGADO : LED_PARPADEO_RAPIDO);
 
-    /* LED rojo — nivel de batería */
     switch (nivel) {
         case BATERIA_OK:
             control_leds_set(LED_ROJO, LED_APAGADO);
@@ -77,16 +82,10 @@ static void actualizar_leds(void)
     }
 }
 
-/* --- Callback de estado BLE --- */
-static void on_estado_bt(int conectado)
+static void on_estado_bt(bool conectado)
 {
-    if (conectado) {
-        sys_set_state(SYS_CONNECTED);
-        ESP_LOGI(TAG, "Estado: SYS_CONNECTED");
-    } else {
-        sys_set_state(SYS_ADVERTISING);
-        ESP_LOGI(TAG, "Estado: SYS_ADVERTISING");
-    }
+    sys_set_state(conectado ? SYS_CONNECTED : SYS_ADVERTISING);
+    ESP_LOGI(TAG, "Estado BLE: %s", conectado ? "CONECTADO" : "ADVERTISING");
     actualizar_leds();
 }
 
@@ -96,7 +95,6 @@ static void on_nivel_bateria(nivel_bateria_t nivel)
     actualizar_leds();
 }
 
-/* --- Nombre del evento para log --- */
 static const char *nombre_evento(evento_entrada_t evento)
 {
     switch (evento) {
@@ -115,7 +113,8 @@ static const char *nombre_evento(evento_entrada_t evento)
  */
 static void input_task(void *arg)
 {
-    QueueHandle_t cola_entrada = driver_entrada_get_queue();
+    (void)arg;
+    QueueHandle_t    cola_entrada = driver_entrada_get_queue();
     evento_entrada_t evento;
 
     while (1) {
@@ -130,6 +129,7 @@ static void input_task(void *arg)
  */
 static void command_task(void *arg)
 {
+    (void)arg;
     evento_entrada_t evento;
 
     while (1) {
@@ -144,12 +144,12 @@ static void command_task(void *arg)
 
             uint16_t uso = 0;
             switch (evento) {
-                case EVT_PLAY_PAUSE: uso = 0x00CD; break;
-                case EVT_SIGUIENTE:  uso = 0x00B5; break;
-                case EVT_ANTERIOR:   uso = 0x00B6; break;
-                case EVT_SILENCIAR:  uso = 0x00E2; break;
-                case EVT_VOL_SUBIR:  uso = 0x00E9; break;
-                case EVT_VOL_BAJAR:  uso = 0x00EA; break;
+                case EVT_PLAY_PAUSE: uso = HID_PLAY_PAUSE; break;
+                case EVT_SIGUIENTE:  uso = HID_SIGUIENTE;  break;
+                case EVT_ANTERIOR:   uso = HID_ANTERIOR;   break;
+                case EVT_SILENCIAR:  uso = HID_SILENCIAR;  break;
+                case EVT_VOL_SUBIR:  uso = HID_VOL_SUBIR;  break;
+                case EVT_VOL_BAJAR:  uso = HID_VOL_BAJAR;  break;
                 default: continue;
             }
 
@@ -162,25 +162,37 @@ void app_main(void)
 {
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        nvs_flash_erase();
-        nvs_flash_init();
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ESP_ERROR_CHECK(nvs_flash_init());
     }
 
-    mutex_estado  = xSemaphoreCreateMutex();
+    mutex_estado = xSemaphoreCreateMutex();
+    if (mutex_estado == NULL) {
+        ESP_LOGE(TAG, "Error al crear mutex de estado");
+        return;
+    }
+
     cola_comandos = xQueueCreate(10, sizeof(evento_entrada_t));
+    if (cola_comandos == NULL) {
+        ESP_LOGE(TAG, "Error al crear cola de comandos");
+        return;
+    }
 
     control_leds_init();
     actualizar_leds();
 
     driver_entrada_init();
     gestion_energia_init();
-	gestion_energia_set_callback(on_nivel_bateria);
+    gestion_energia_set_callback(on_nivel_bateria);
     comunicacion_bt_init();
     comunicacion_bt_set_callback_estado(on_estado_bt);
 
-    sys_set_state(SYS_ADVERTISING);
     ESP_LOGI(TAG, "Sistema inicializado — esperando conexión BLE");
 
-    xTaskCreate(input_task,   "input_task",   2048, NULL, TAREA_PRIO_INPUT, NULL);
-    xTaskCreate(command_task, "command_task", 2048, NULL, TAREA_PRIO_CMD,   NULL);
+    BaseType_t ok;
+    ok = xTaskCreate(input_task,   "input_task",   2048, NULL, TAREA_PRIO_INPUT, NULL);
+    if (ok != pdPASS) ESP_LOGE(TAG, "Error al crear input_task");
+
+    ok = xTaskCreate(command_task, "command_task", 2048, NULL, TAREA_PRIO_CMD,   NULL);
+    if (ok != pdPASS) ESP_LOGE(TAG, "Error al crear command_task");
 }
