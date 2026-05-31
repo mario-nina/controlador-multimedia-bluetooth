@@ -4,6 +4,8 @@
 
 /**
  * @brief Inicializa el stack NimBLE y comienza advertising BLE.
+ *
+ * @note NVS Flash debe inicializarse antes de llamar esta función.
  */
 void comunicacion_bt_init(void);
 
@@ -13,11 +15,12 @@ void comunicacion_bt_init(void);
 int comunicacion_bt_conectado(void);
 
 /**
- * @brief Retorna el handle de la conexión BLE activa.
+ * @brief Envía un uso HID Consumer Control al dispositivo conectado.
  *
- * @return uint16_t Connection handle.
+ * @param hid_uso Código de uso HID (ej. 0x00CD para Play/Pause).
  */
-uint16_t comunicacion_bt_get_conn_handle(void);
+void comunicacion_bt_enviar_uso(uint16_t hid_uso);
+
 /**
  * @brief Registra un callback que se llama cuando cambia el estado de conexión.
  *

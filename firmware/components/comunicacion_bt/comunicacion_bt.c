@@ -1,7 +1,6 @@
 #include "comunicacion_bt.h"
 #include "hid.h"
 #include "esp_log.h"
-#include "nvs_flash.h"
 #include "nimble/nimble_port.h"
 #include "nimble/nimble_port_freertos.h"
 #include "host/ble_hs.h"
@@ -116,15 +115,17 @@ static void tarea_host_nimble(void *param)
     nimble_port_freertos_deinit();
 }
 
+void comunicacion_bt_enviar_uso(uint16_t hid_uso)
+{
+    if (!bt_conectado) {
+        ESP_LOGW(TAG, "Envío descartado — sin conexión BLE");
+        return;
+    }
+    hid_send_report(hid_uso, conn_handle);
+}
+
 void comunicacion_bt_init(void)
 {
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
-        ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        nvs_flash_erase();
-        nvs_flash_init();
-    }
-
     nimble_port_init();
 
     ble_hs_cfg.sync_cb = on_stack_listo;
@@ -140,11 +141,6 @@ void comunicacion_bt_init(void)
 int comunicacion_bt_conectado(void)
 {
     return bt_conectado;
-}
-
-uint16_t comunicacion_bt_get_conn_handle(void)
-{
-    return conn_handle;
 }
 
 void comunicacion_bt_set_callback_estado(void (*callback)(int conectado))

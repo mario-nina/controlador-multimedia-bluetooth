@@ -1,5 +1,6 @@
 # Controlador Multimedia Bluetooth
 
+![CI](https://github.com/mario-nina/controlador-multimedia-bluetooth/actions/workflows/ci.yml/badge.svg)
 ![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
 ![Versión](https://img.shields.io/badge/versión-v0.1.0-blue)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
@@ -130,22 +131,30 @@ idf.py flash monitor
 
 ```
 controlador-multimedia-bluetooth/
-├── firmware/               # Código fuente del firmware
-│   ├── main/               # Aplicación principal
-│   └── components/         # Componentes reutilizables
-├── hardware/               # Archivos de diseño de hardware
-│   ├── esquematico/        # Esquemático del circuito
-│   ├── pcb/                # Diseño de PCB en KiCad
-│   └── diseno_3d/          # Diseño 3D de la carcasa
-├── docs/                   # Documentación técnica
-│   ├── memoria_tecnica/    # Memoria técnica del proyecto
-│   ├── manual_usuario/     # Manual de usuario
-│   └── lista_materiales/   # Lista de materiales
-├── test/                   # Pruebas y validación
-│   └── resultados/         # Resultados de pruebas
+├── firmware/                     # Código fuente del firmware (ESP-IDF)
+│   ├── main/                     # Punto de entrada de la aplicación
+│   └── components/               # Módulos independientes
+│       ├── comunicacion_bt/      # Stack NimBLE + perfil HID Consumer Control
+│       ├── control_leds/         # Patrones de LEDs via esp_timer
+│       ├── driver_entrada/       # Botones (ISR) + encoder rotativo (PCNT)
+│       └── gestion_energia/      # Gestión de energía — pendiente Fase 10
+├── hardware/                     # Archivos de diseño de hardware
+│   ├── controlador_multimedia/   # Proyecto KiCad (esquemático + PCB)
+│   ├── esquematico/              # Exportaciones del esquemático (PDF/SVG)
+│   ├── pcb/                      # Exportaciones Gerber — pendiente Fase 12
+│   ├── diseno_3d/                # Exportaciones STEP — pendiente Fase 12
+│   └── pines.md                  # Asignación de pines con justificación técnica
+├── docs/                         # Documentación técnica
+│   ├── memoria_tecnica/          # Memoria técnica del proyecto
+│   ├── manual_usuario/           # Manual de usuario — pendiente Fase 12
+│   └── lista_materiales/         # Lista de materiales — pendiente Fase 12
+├── test/                         # Pruebas y validación
+│   └── resultados/               # Resultados de pruebas físicas por fase
 ├── CHANGELOG.md
 ├── CONVENTIONS.md
+├── CONTRIBUTING.md
 ├── LICENSE
+├── ROADMAP.md
 └── README.md
 ```
 

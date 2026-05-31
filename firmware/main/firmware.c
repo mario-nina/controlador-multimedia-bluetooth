@@ -3,11 +3,11 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "nvs_flash.h"
 
 #include "control_leds.h"
 #include "driver_entrada.h"
 #include "comunicacion_bt.h"
-#include "hid.h"
 
 static const char *TAG = "firmware";
 
@@ -17,9 +17,9 @@ static const char *TAG = "firmware";
 
 /* --- Máquina de estados del sistema --- */
 typedef enum {
-    SYS_ADVERTISING,
-    SYS_CONNECTED,
-    SYS_SLEEPING,
+    SYS_ADVERTISING, /**< Sin conexión BLE — anunciando */
+    SYS_CONNECTED,   /**< Conexión BLE activa */
+    SYS_SLEEPING,    /**< Modo bajo consumo — pendiente Fase 10 */
 } sys_state_t;
 
 static sys_state_t       estado_sistema = SYS_ADVERTISING;
@@ -104,24 +104,30 @@ static void command_task(void *arg)
 
             ESP_LOGI(TAG, "Enviando: %s", nombre_evento(evento));
 
-            uint16_t usage = 0;
+            uint16_t uso = 0;
             switch (evento) {
-                case EVT_PLAY_PAUSE: usage = 0x00CD; break;
-                case EVT_SIGUIENTE:  usage = 0x00B5; break;
-                case EVT_ANTERIOR:   usage = 0x00B6; break;
-                case EVT_SILENCIAR:  usage = 0x00E2; break;
-                case EVT_VOL_SUBIR:  usage = 0x00E9; break;
-                case EVT_VOL_BAJAR:  usage = 0x00EA; break;
+                case EVT_PLAY_PAUSE: uso = 0x00CD; break;
+                case EVT_SIGUIENTE:  uso = 0x00B5; break;
+                case EVT_ANTERIOR:   uso = 0x00B6; break;
+                case EVT_SILENCIAR:  uso = 0x00E2; break;
+                case EVT_VOL_SUBIR:  uso = 0x00E9; break;
+                case EVT_VOL_BAJAR:  uso = 0x00EA; break;
                 default: continue;
             }
 
-            hid_send_report(usage, comunicacion_bt_get_conn_handle());
+            comunicacion_bt_enviar_uso(uso);
         }
     }
 }
 
 void app_main(void)
 {
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        nvs_flash_erase();
+        nvs_flash_init();
+    }
+
     mutex_estado  = xSemaphoreCreateMutex();
     cola_comandos = xQueueCreate(10, sizeof(evento_entrada_t));
 

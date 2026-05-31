@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, 'feature/**']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    name: Compilar firmware ESP32
+    runs-on: ubuntu-latest
+    container:
+      image: espressif/idf:v6.0.1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar target ESP32
+        working-directory: firmware
+        run: idf.py set-target esp32
+
+      - name: Compilar
+        working-directory: firmware
+        run: idf.py build
