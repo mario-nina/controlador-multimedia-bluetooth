@@ -8,6 +8,7 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "esp_pm.h"
 #include "nvs_flash.h"
 
 #include "control_leds.h"
@@ -59,8 +60,6 @@ static void sys_set_state(sys_state_t nuevo_estado)
 
 /**
  * @brief Actualiza los LEDs según el estado BT y el nivel de batería.
- *
- * Debe llamarse cada vez que cambie cualquiera de los dos estados.
  */
 static void actualizar_leds(void)
 {
@@ -165,6 +164,14 @@ void app_main(void)
         ESP_ERROR_CHECK(nvs_flash_erase());
         ESP_ERROR_CHECK(nvs_flash_init());
     }
+
+    /* Habilitar modem sleep para reducir consumo del radio BLE */
+    esp_pm_config_t pm_config = {
+        .max_freq_mhz       = 160,
+        .min_freq_mhz       = 80,
+        .light_sleep_enable = false,
+    };
+    esp_pm_configure(&pm_config);
 
     mutex_estado = xSemaphoreCreateMutex();
     if (mutex_estado == NULL) {
