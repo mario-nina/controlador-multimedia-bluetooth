@@ -10,17 +10,14 @@ jobs:
   build:
     name: Compilar firmware ESP32
     runs-on: ubuntu-latest
-    container:
-      image: espressif/idf:v6.0.1
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar target ESP32
-        working-directory: firmware
-        run: idf.py set-target esp32
-
-      - name: Compilar
-        working-directory: firmware
-        run: idf.py build
+      - name: Compilar firmware
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v6.0.1
+          target: esp32
+          path: firmware
