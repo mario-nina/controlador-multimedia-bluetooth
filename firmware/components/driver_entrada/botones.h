@@ -5,7 +5,7 @@
 #include "pines.h"
 
 /** @brief Tiempo mínimo entre eventos válidos — anti-rebote */
-#define DEBOUNCE_TIEMPO_US  50000UL
+#define DEBOUNCE_TIEMPO_US  150000UL
 
 /**
  * @brief Inicializa los GPIOs de botones y el pulsador del encoder.

@@ -23,3 +23,10 @@ void gestion_energia_init(void);
  * @return nivel_bateria_t Nivel evaluado en el último ciclo de monitoreo.
  */
 nivel_bateria_t gestion_energia_get_nivel(void);
+
+/**
+ * @brief Registra un callback que se llama cuando cambia el nivel de batería.
+ *
+ * @param callback Función que recibe el nuevo nivel de batería.
+ */
+void gestion_energia_set_callback(void (*callback)(nivel_bateria_t nivel));

@@ -19,6 +19,7 @@ static const char *TAG = "gestion_energia";
 static adc_oneshot_unit_handle_t adc_handle   = NULL;
 static adc_cali_handle_t         adc_cali     = NULL;
 static nivel_bateria_t           nivel_actual = BATERIA_OK;
+static void (*callback_nivel)(nivel_bateria_t nivel) = NULL;
 
 /**
  * @brief Lee el voltaje de la batería en mV usando el divisor resistivo.
@@ -62,6 +63,8 @@ static nivel_bateria_t evaluar_nivel(int voltaje_mv)
  */
 static void power_task(void *arg)
 {
+    nivel_bateria_t nivel_anterior = BATERIA_OK;
+
     while (1) {
         int voltaje_mv = leer_voltaje_bateria();
         nivel_actual   = evaluar_nivel(voltaje_mv);
@@ -70,6 +73,11 @@ static void power_task(void *arg)
                                 (nivel_actual == BATERIA_BAJA)     ? "BAJA" : "CRITICA";
 
         ESP_LOGI(TAG, "Batería: %dmV — Nivel: %s", voltaje_mv, nivel_str);
+
+        if (nivel_actual != nivel_anterior) {
+            nivel_anterior = nivel_actual;
+            if (callback_nivel) callback_nivel(nivel_actual);
+        }
 
         vTaskDelay(pdMS_TO_TICKS(30000));
     }
@@ -110,4 +118,9 @@ void gestion_energia_init(void)
 nivel_bateria_t gestion_energia_get_nivel(void)
 {
     return nivel_actual;
+}
+
+void gestion_energia_set_callback(void (*callback)(nivel_bateria_t nivel))
+{
+    callback_nivel = callback;
 }

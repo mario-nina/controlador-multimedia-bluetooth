@@ -18,9 +18,9 @@ static const char *TAG = "firmware";
 
 /* --- Máquina de estados del sistema --- */
 typedef enum {
-    SYS_ADVERTISING, /**< Sin conexión BLE — anunciando */
-    SYS_CONNECTED,   /**< Conexión BLE activa */
-    SYS_SLEEPING,    /**< Modo bajo consumo — pendiente Fase 10 */
+    SYS_ADVERTISING,
+    SYS_CONNECTED,
+    SYS_SLEEPING,
 } sys_state_t;
 
 static sys_state_t       estado_sistema = SYS_ADVERTISING;
@@ -45,18 +45,55 @@ static void sys_set_state(sys_state_t nuevo_estado)
 /* --- Cola de comandos --- */
 static QueueHandle_t cola_comandos = NULL;
 
+/**
+ * @brief Actualiza los LEDs según el estado BT y el nivel de batería.
+ *
+ * Debe llamarse cada vez que cambie cualquiera de los dos estados.
+ */
+static void actualizar_leds(void)
+{
+    sys_state_t    estado  = sys_get_state();
+    nivel_bateria_t nivel  = gestion_energia_get_nivel();
+    int conectado          = (estado == SYS_CONNECTED);
+
+    /* LED azul — estado Bluetooth */
+    if (conectado) {
+        control_leds_set(LED_AZUL, LED_APAGADO);
+    } else {
+        control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
+    }
+
+    /* LED rojo — nivel de batería */
+    switch (nivel) {
+        case BATERIA_OK:
+            control_leds_set(LED_ROJO, LED_APAGADO);
+            break;
+        case BATERIA_BAJA:
+            control_leds_set(LED_ROJO, LED_PARPADEO_LENTO);
+            break;
+        case BATERIA_CRITICA:
+            control_leds_set(LED_ROJO, LED_PARPADEO_RAPIDO);
+            break;
+    }
+}
+
 /* --- Callback de estado BLE --- */
 static void on_estado_bt(int conectado)
 {
     if (conectado) {
         sys_set_state(SYS_CONNECTED);
-        control_leds_set(LED_AZUL, LED_ENCENDIDO);
         ESP_LOGI(TAG, "Estado: SYS_CONNECTED");
     } else {
         sys_set_state(SYS_ADVERTISING);
-        control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
         ESP_LOGI(TAG, "Estado: SYS_ADVERTISING");
     }
+    actualizar_leds();
+}
+
+static void on_nivel_bateria(nivel_bateria_t nivel)
+{
+    (void)nivel;
+    actualizar_leds();
 }
 
 /* --- Nombre del evento para log --- */
@@ -133,10 +170,11 @@ void app_main(void)
     cola_comandos = xQueueCreate(10, sizeof(evento_entrada_t));
 
     control_leds_init();
-    control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
+    actualizar_leds();
 
     driver_entrada_init();
-	gestion_energia_init();
+    gestion_energia_init();
+	gestion_energia_set_callback(on_nivel_bateria);
     comunicacion_bt_init();
     comunicacion_bt_set_callback_estado(on_estado_bt);
 
