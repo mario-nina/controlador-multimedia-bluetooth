@@ -10,9 +10,6 @@ static const char *TAG = "encoder";
 static QueueHandle_t cola_eventos = NULL;
 static pcnt_unit_handle_t pcnt_unit = NULL;
 
-/**
- * @brief Callback del PCNT — dispara cuando el contador alcanza un watch point.
- */
 static bool callback_pcnt(pcnt_unit_handle_t unit,
                            const pcnt_watch_event_data_t *edata,
                            void *user_ctx)
@@ -23,7 +20,6 @@ static bool callback_pcnt(pcnt_unit_handle_t unit,
     int64_t ahora = esp_timer_get_time();
     int valor = edata->watch_point_value;
 
-    /* Descartar si cambió de dirección en menos de 50ms */
     if ((valor != ultimo_valor) && ((ahora - ultimo_tiempo) < 50000)) {
         return pdFALSE;
     }
@@ -44,8 +40,8 @@ void encoder_init(QueueHandle_t cola)
 {
     cola_eventos = cola;
 
-    gpio_set_pull_mode(GPIO_ENCODER_CLK, GPIO_PULLUP_ONLY);
-    gpio_set_pull_mode(GPIO_ENCODER_DT,  GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode(PIN_ENCODER_CLK, GPIO_PULLUP_ONLY);
+    gpio_set_pull_mode(PIN_ENCODER_DT,  GPIO_PULLUP_ONLY);
 
     pcnt_unit_config_t unit_config = {
         .high_limit =  2,
@@ -59,15 +55,15 @@ void encoder_init(QueueHandle_t cola)
     ESP_ERROR_CHECK(pcnt_unit_set_glitch_filter(pcnt_unit, &filter_config));
 
     pcnt_chan_config_t chan_a_config = {
-        .edge_gpio_num  = GPIO_ENCODER_CLK,
-        .level_gpio_num = GPIO_ENCODER_DT,
+        .edge_gpio_num  = PIN_ENCODER_CLK,
+        .level_gpio_num = PIN_ENCODER_DT,
     };
     pcnt_channel_handle_t chan_a = NULL;
     ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_a_config, &chan_a));
 
     pcnt_chan_config_t chan_b_config = {
-        .edge_gpio_num  = GPIO_ENCODER_DT,
-        .level_gpio_num = GPIO_ENCODER_CLK,
+        .edge_gpio_num  = PIN_ENCODER_DT,
+        .level_gpio_num = PIN_ENCODER_CLK,
     };
     pcnt_channel_handle_t chan_b = NULL;
     ESP_ERROR_CHECK(pcnt_new_channel(pcnt_unit, &chan_b_config, &chan_b));
@@ -98,5 +94,6 @@ void encoder_init(QueueHandle_t cola)
     ESP_ERROR_CHECK(pcnt_unit_clear_count(pcnt_unit));
     ESP_ERROR_CHECK(pcnt_unit_start(pcnt_unit));
 
-    ESP_LOGI(TAG, "Encoder PCNT inicializado — GPIO18 GPIO19");
+    ESP_LOGI(TAG, "Encoder PCNT inicializado — GPIO%d GPIO%d",
+             PIN_ENCODER_CLK, PIN_ENCODER_DT);
 }

@@ -2,12 +2,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
-
-/** @brief GPIOs de los botones */
-#define GPIO_BOTON_NEXT  22
-#define GPIO_BOTON_PREV  23
-#define GPIO_BOTON_MUTE  25
-#define GPIO_ENCODER_SW  21
+#include "pines.h"
 
 /** @brief Tiempo mínimo entre eventos válidos — anti-rebote */
 #define DEBOUNCE_TIEMPO_US  50000UL

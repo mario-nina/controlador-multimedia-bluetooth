@@ -1,27 +1,21 @@
 #pragma once
 
+#include "pines.h"
 #include "driver/gpio.h"
 
-/* Períodos de parpadeo en microsegundos */
-#define LED_PERIODO_RAPIDO_US  200000UL  /**< Parpadeo rápido: 200ms  */
-#define LED_PERIODO_LENTO_US  1000000UL  /**< Parpadeo lento: 1000ms  */
+#define LED_PERIODO_RAPIDO_US   200000UL
+#define LED_PERIODO_LENTO_US   1000000UL
 
-/**
- * @brief Identificadores de los LEDs del sistema.
- */
 typedef enum {
-    LED_AZUL = 26, /**< LED de estado Bluetooth (GPIO26) */
-    LED_ROJO = 27  /**< LED de estado batería (GPIO27)   */
+    LED_AZUL = PIN_LED_AZUL,
+    LED_ROJO = PIN_LED_ROJO
 } led_id_t;
 
-/**
- * @brief Patrones de iluminación disponibles.
- */
 typedef enum {
-    LED_APAGADO,         /**< LED apagado permanentemente  */
-    LED_ENCENDIDO,       /**< LED encendido permanentemente */
-    LED_PARPADEO_RAPIDO, /**< Parpadeo cada 200ms           */
-    LED_PARPADEO_LENTO   /**< Parpadeo cada 1000ms          */
+    LED_APAGADO,
+    LED_ENCENDIDO,
+    LED_PARPADEO_RAPIDO,
+    LED_PARPADEO_LENTO
 } led_patron_t;
 
 /**
