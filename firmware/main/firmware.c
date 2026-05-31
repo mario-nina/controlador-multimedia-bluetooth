@@ -8,6 +8,7 @@
 #include "control_leds.h"
 #include "driver_entrada.h"
 #include "comunicacion_bt.h"
+#include "gestion_energia.h"
 
 static const char *TAG = "firmware";
 
@@ -135,6 +136,7 @@ void app_main(void)
     control_leds_set(LED_AZUL, LED_PARPADEO_RAPIDO);
 
     driver_entrada_init();
+	gestion_energia_init();
     comunicacion_bt_init();
     comunicacion_bt_set_callback_estado(on_estado_bt);
 
