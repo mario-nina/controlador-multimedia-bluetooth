@@ -10,19 +10,6 @@
 
 static const char *TAG = "hid";
 
-/* UUIDs de servicios GATT */
-#define UUID_HID_SERVICE          0x1812  /**< HID Service                  */
-#define UUID_DIS_SERVICE          0x180A  /**< Device Information Service   */
-
-/* UUIDs de características GATT */
-#define UUID_CHR_PROTOCOL_MODE    0x2A4E  /**< Protocol Mode                */
-#define UUID_CHR_REPORT_MAP       0x2A4B  /**< Report Map                   */
-#define UUID_CHR_REPORT           0x2A4D  /**< HID Report                   */
-#define UUID_CHR_HID_INFO         0x2A4A  /**< HID Information              */
-#define UUID_CHR_HID_CONTROL      0x2A4C  /**< HID Control Point            */
-#define UUID_CHR_PNP_ID           0x2A50  /**< PnP ID                       */
-#define UUID_DSC_REPORT_REF       0x2908  /**< Report Reference descriptor  */
-
 static uint16_t hid_report_handle     = 0;
 static bool     notificaciones_activas = false;
 
@@ -58,9 +45,9 @@ static int callback_hid_info(uint16_t conn_handle, uint16_t attr_handle,
 {
     (void)conn_handle; (void)attr_handle; (void)arg;
     static const uint8_t info[] = {
-        0x11, 0x01,  /* HID version 1.11  */
-        0x00,        /* Country code: none */
-        0x01         /* Flags: remoteable  */
+        0x11, 0x01,  /* HID version 1.11   */
+        0x00,        /* Country code: none  */
+        0x01         /* Flags: remoteable   */
     };
     return os_mbuf_append(ctxt->om, info, sizeof(info));
 }
@@ -91,7 +78,7 @@ static int callback_protocol_mode(uint16_t conn_handle, uint16_t attr_handle,
                                    struct ble_gatt_access_ctxt *ctxt, void *arg)
 {
     (void)conn_handle; (void)attr_handle; (void)arg;
-    static uint8_t mode = 0x01; /* Report Protocol Mode */
+    static uint8_t mode = HID_PROTOCOL_MODE_REPORT;
     if (ctxt->op == BLE_GATT_ACCESS_OP_READ_CHR) {
         return os_mbuf_append(ctxt->om, &mode, sizeof(mode));
     }
@@ -103,10 +90,10 @@ static int callback_pnp_id(uint16_t conn_handle, uint16_t attr_handle,
 {
     (void)conn_handle; (void)attr_handle; (void)arg;
     static const uint8_t pnp[] = {
-        0x02,        /* Vendor ID source: USB            */
-        0xE5, 0x02,  /* Vendor ID: Espressif (0x02E5)   */
-        0x00, 0x00,  /* Product ID                       */
-        0x00, 0x01,  /* Product version: 0.1             */
+        0x02,        /* Vendor ID source: USB          */
+        0xE5, 0x02,  /* Vendor ID: Espressif (0x02E5)  */
+        0x00, 0x00,  /* Product ID                     */
+        0x00, 0x01,  /* Product version: 0.1           */
     };
     return os_mbuf_append(ctxt->om, pnp, sizeof(pnp));
 }
@@ -204,7 +191,7 @@ void hid_send_report(uint16_t usage_id, uint16_t conn_handle)
     }
     ble_gatts_notify_custom(conn_handle, hid_report_handle, om);
 
-    uint16_t key_up = 0x0000;
+    uint16_t key_up = HID_KEY_UP;
     om = ble_hs_mbuf_from_flat(&key_up, sizeof(key_up));
     if (om == NULL) {
         ESP_LOGE(TAG, "Error al asignar mbuf para key-up");

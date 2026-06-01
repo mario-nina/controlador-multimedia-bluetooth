@@ -14,12 +14,6 @@
 
 static const char *TAG = "gestion_energia";
 
-#define UMBRAL_BAJA        3400  /**< Voltaje mínimo nivel OK en mV    */
-#define UMBRAL_CRITICA     3200  /**< Voltaje mínimo nivel BAJA en mV  */
-#define NUM_MUESTRAS         16  /**< Muestras ADC para promediado     */
-#define CANAL_ADC    ADC_CHANNEL_6  /**< Canal ADC1 para PIN_ADC_BATERIA */
-#define PERIODO_MONITOREO_MS  30000  /**< Ciclo de monitoreo en ms      */
-
 static adc_oneshot_unit_handle_t adc_handle   = NULL;
 static adc_cali_handle_t         adc_cali     = NULL;
 static nivel_bateria_t           nivel_actual = BATERIA_OK;
@@ -28,7 +22,7 @@ static void (*callback_nivel)(nivel_bateria_t nivel) = NULL;
 /**
  * @brief Lee el voltaje de la batería en mV usando el divisor resistivo.
  *
- * Promedia NUM_MUESTRAS lecturas ADC y multiplica por 2 para compensar
+ * Promedia BATERIA_NUM_MUESTRAS lecturas ADC y multiplica por 2 para compensar
  * el divisor resistivo 100kΩ/100kΩ.
  *
  * @return Voltaje estimado de la batería en mV, o 0 si el ADC no está listo.
@@ -42,9 +36,9 @@ static int leer_voltaje_bateria(void)
 
     int suma = 0;
 
-    for (int i = 0; i < NUM_MUESTRAS; i++) {
+    for (int i = 0; i < BATERIA_NUM_MUESTRAS; i++) {
         int raw = 0;
-        if (adc_oneshot_read(adc_handle, CANAL_ADC, &raw) != ESP_OK) {
+        if (adc_oneshot_read(adc_handle, CANAL_ADC_BATERIA, &raw) != ESP_OK) {
             ESP_LOGW(TAG, "Error en lectura ADC — muestra %d descartada", i);
             continue;
         }
@@ -53,7 +47,7 @@ static int leer_voltaje_bateria(void)
         suma += mv;
     }
 
-    return (suma / NUM_MUESTRAS) * 2;
+    return (suma / BATERIA_NUM_MUESTRAS) * 2;
 }
 
 /**
@@ -64,19 +58,20 @@ static int leer_voltaje_bateria(void)
  */
 static nivel_bateria_t evaluar_nivel(int voltaje_mv)
 {
-    if (voltaje_mv < UMBRAL_CRITICA) return BATERIA_CRITICA;
-    if (voltaje_mv < UMBRAL_BAJA)    return BATERIA_BAJA;
+    if (voltaje_mv < BATERIA_UMBRAL_CRITICA_MV) return BATERIA_CRITICA;
+    if (voltaje_mv < BATERIA_UMBRAL_BAJA_MV)    return BATERIA_BAJA;
     return BATERIA_OK;
 }
 
 /**
  * @brief Tarea de monitoreo periódico de batería.
  *
- * Evalúa el nivel cada PERIODO_MONITOREO_MS ms e invoca el callback
+ * Evalúa el nivel cada BATERIA_PERIODO_MONITOREO_MS ms e invoca el callback
  * solo cuando el nivel cambia.
  */
 static void power_task(void *arg)
 {
+    (void)arg;
     nivel_bateria_t nivel_anterior = BATERIA_OK;
 
     while (1) {
@@ -93,7 +88,7 @@ static void power_task(void *arg)
             if (callback_nivel) callback_nivel(nivel_actual);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(PERIODO_MONITOREO_MS));
+        vTaskDelay(pdMS_TO_TICKS(BATERIA_PERIODO_MONITOREO_MS));
     }
 }
 
@@ -108,7 +103,7 @@ void gestion_energia_init(void)
         .atten    = ADC_ATTEN_DB_12,
         .bitwidth = ADC_BITWIDTH_12,
     };
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, CANAL_ADC, &chan_cfg));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc_handle, CANAL_ADC_BATERIA, &chan_cfg));
 
     adc_cali_line_fitting_config_t cali_cfg = {
         .unit_id  = ADC_UNIT_1,
@@ -120,7 +115,9 @@ void gestion_energia_init(void)
         adc_cali = NULL;
     }
 
-    BaseType_t ret = xTaskCreate(power_task, "power_task", 2048, NULL, 2, NULL);
+    BaseType_t ret = xTaskCreate(power_task, "power_task",
+                                 TAREA_STACK_SIZE, NULL,
+                                 TAREA_PRIO_BATERIA, NULL);
     if (ret != pdPASS) {
         ESP_LOGE(TAG, "Error al crear power_task");
     }

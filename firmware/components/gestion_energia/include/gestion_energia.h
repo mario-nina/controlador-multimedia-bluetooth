@@ -5,6 +5,20 @@
 
 #pragma once
 
+#include "esp_adc/adc_oneshot.h"
+#include "config.h"
+
+/* Configuración del ADC */
+#define CANAL_ADC_BATERIA             ADC_CHANNEL_6  /**< Canal ADC1 correspondiente a GPIO34 — PIN_ADC_BATERIA */
+#define BATERIA_NUM_MUESTRAS          16              /**< Muestras ADC para promediado                         */
+
+/* Umbrales de nivel de batería */
+#define BATERIA_UMBRAL_BAJA_MV        3400  /**< Voltaje mínimo nivel OK en mV   */
+#define BATERIA_UMBRAL_CRITICA_MV     3200  /**< Voltaje mínimo nivel BAJA en mV */
+
+/* Configuración de monitoreo */
+#define BATERIA_PERIODO_MONITOREO_MS  10000  /**< Ciclo de monitoreo en ms        */
+
 /**
  * @brief Niveles de batería del sistema.
  */
@@ -18,7 +32,7 @@ typedef enum {
  * @brief Inicializa el módulo de gestión de energía.
  *
  * Configura el ADC1 en PIN_ADC_BATERIA para lectura del divisor resistivo.
- * Crea la tarea de monitoreo periódico cada 30 segundos.
+ * Crea la tarea de monitoreo periódico cada BATERIA_PERIODO_MONITOREO_MS ms.
  */
 void gestion_energia_init(void);
 

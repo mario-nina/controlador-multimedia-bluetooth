@@ -8,6 +8,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 
+#define ENCODER_WATCHPOINT       4        /**< Pulsos de cuadratura por evento — 1 detente físico EC11 */
+#define ENCODER_DEBOUNCE_US      50000UL  /**< Intervalo mínimo entre pulsos válidos en µs             */
+#define ENCODER_FILTRO_GLITCH_NS 10000UL  /**< Duración máxima de glitch ignorado por hardware en ns   */
+
 /**
  * @brief Inicializa el periférico PCNT para el encoder rotativo.
  *

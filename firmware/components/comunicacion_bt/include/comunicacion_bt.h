@@ -8,6 +8,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+/* Configuración del dispositivo BLE */
+#define BT_NOMBRE_DISPOSITIVO  "Controlador Multimedia"  /**< Nombre visible en el emparejamiento BLE */
+#define BT_APPEARANCE_HID       0x03C4                   /**< Appearance HID Keyboard/Remote          */
+
+/* Códigos de uso HID Consumer Control */
+#define HID_PLAY_PAUSE   0x00CD  /**< Reproducir/pausar  */
+#define HID_SIGUIENTE    0x00B5  /**< Siguiente pista     */
+#define HID_ANTERIOR     0x00B6  /**< Pista anterior      */
+#define HID_MUTE_UNMUTE  0x00E2  /**< Mute/unmute         */
+#define HID_VOL_SUBIR    0x00E9  /**< Subir volumen       */
+#define HID_VOL_BAJAR    0x00EA  /**< Bajar volumen       */
+
 /**
  * @brief Inicializa el stack NimBLE y comienza advertising BLE.
  *
@@ -27,7 +39,7 @@ bool comunicacion_bt_conectado(void);
  *
  * Si no hay conexión activa el comando se descarta silenciosamente.
  *
- * @param hid_uso Código de uso HID (ej. 0x00CD para Play/Pause).
+ * @param hid_uso Código de uso HID.
  */
 void comunicacion_bt_enviar_uso(uint16_t hid_uso);
 

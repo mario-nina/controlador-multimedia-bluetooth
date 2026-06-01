@@ -14,11 +14,8 @@
 
 static const char *TAG = "comunicacion_bt";
 
-#define NOMBRE_DISPOSITIVO    "Controlador Multimedia"
-#define BLE_APPEARANCE_HID    0x03C4  /**< HID Keyboard/Remote appearance */
-
-static uint16_t conn_handle                    = BLE_HS_CONN_HANDLE_NONE;
-static bool     bt_conectado                   = false;
+static uint16_t conn_handle                      = BLE_HS_CONN_HANDLE_NONE;
+static bool     bt_conectado                     = false;
 static void   (*callback_estado)(bool conectado) = NULL;
 
 static void iniciar_advertising(void);
@@ -28,6 +25,8 @@ static void iniciar_advertising(void);
  */
 static int callback_gap(struct ble_gap_event *event, void *arg)
 {
+    (void)arg;
+
     switch (event->type) {
 
         case BLE_GAP_EVENT_CONNECT:
@@ -80,10 +79,10 @@ static void iniciar_advertising(void)
     struct ble_hs_adv_fields  fields = {0};
 
     fields.flags               = BLE_HS_ADV_F_DISC_GEN | BLE_HS_ADV_F_BREDR_UNSUP;
-    fields.name                = (uint8_t *)NOMBRE_DISPOSITIVO;
-    fields.name_len            = strlen(NOMBRE_DISPOSITIVO);
+    fields.name                = (uint8_t *)BT_NOMBRE_DISPOSITIVO;
+    fields.name_len            = strlen(BT_NOMBRE_DISPOSITIVO);
     fields.name_is_complete    = 1;
-    fields.appearance          = BLE_APPEARANCE_HID;
+    fields.appearance          = BT_APPEARANCE_HID;
     fields.appearance_is_present = 1;
 
     int rc = ble_gap_adv_set_fields(&fields);
@@ -100,7 +99,7 @@ static void iniciar_advertising(void)
     if (rc != 0) {
         ESP_LOGE(TAG, "Error al iniciar advertising: %d", rc);
     } else {
-        ESP_LOGI(TAG, "Advertising iniciado — \"%s\"", NOMBRE_DISPOSITIVO);
+        ESP_LOGI(TAG, "Advertising iniciado — \"%s\"", BT_NOMBRE_DISPOSITIVO);
     }
 }
 
@@ -118,6 +117,7 @@ static void on_stack_listo(void)
  */
 static void tarea_host_nimble(void *param)
 {
+    (void)param;
     ESP_LOGI(TAG, "Tarea host NimBLE iniciada");
     nimble_port_run();
     nimble_port_freertos_deinit();
@@ -129,7 +129,7 @@ void comunicacion_bt_init(void)
 
     ble_hs_cfg.sync_cb = on_stack_listo;
 
-    ble_svc_gap_device_name_set(NOMBRE_DISPOSITIVO);
+    ble_svc_gap_device_name_set(BT_NOMBRE_DISPOSITIVO);
     hid_init();
 
     nimble_port_freertos_init(tarea_host_nimble);

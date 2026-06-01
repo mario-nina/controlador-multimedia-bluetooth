@@ -8,7 +8,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 
-#define DEBOUNCE_TIEMPO_US  150000UL  /**< Tiempo mínimo entre eventos válidos en µs */
+#define BOTON_DEBOUNCE_US  150000UL  /**< Tiempo mínimo entre eventos válidos en µs */
 
 /**
  * @brief Inicializa los GPIOs de botones y el pulsador del encoder.

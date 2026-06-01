@@ -15,14 +15,14 @@ static QueueHandle_t cola_eventos = NULL;
 
 void driver_entrada_init(void)
 {
-    cola_eventos = xQueueCreate(10, sizeof(evento_entrada_t));
+    cola_eventos = xQueueCreate(COLA_ENTRADA_TAM, sizeof(evento_entrada_t));
     if (cola_eventos == NULL) {
         ESP_LOGE(TAG, "Error al crear cola de eventos");
         return;
     }
 
-    /* El servicio ISR debe instalarse una vez antes de registrar handlers */
-    ESP_ERROR_CHECK(gpio_install_isr_service(0));
+    /* ISR_FLAGS_DEFAULT: sin flags especiales, prioridad estándar */
+    ESP_ERROR_CHECK(gpio_install_isr_service(ISR_FLAGS_DEFAULT));
 
     botones_init(cola_eventos);
     encoder_init(cola_eventos);
