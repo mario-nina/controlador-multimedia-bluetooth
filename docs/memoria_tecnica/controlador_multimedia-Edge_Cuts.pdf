@@ -1,0 +1,742 @@
+%PDF-1.5
+%ÄÅÇÉ
+5 0 obj
+<< /Length 6 0 R /Filter /FlateDecode >>
+stream
+x⁄}åK
+A˜}äú ‰ﬂ…	ó„\‚l‹x}{TêVî»ÉJäê®–6Ôz\Åa?r~∏û^eŸA¢ZX¿≠}±FòÏë1d)ÍR[!-ë«Ÿo:~π0“á÷\∫£π3xf02âÜ¿⁄˙XÇd]ÃfvôUGIı¡&Á?ˆ·<¥;ç9e
+endstream
+endobj
+6 0 obj
+133
+endobj
+26 0 obj
+[7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R 23 0 R 24 0 R 25 0 R]
+endobj
+27 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/Resources <<
+    /ProcSet [/PDF /Text /ImageC /ImageB]
+    /Font 2 0 R
+    /XObject 3 0 R >>
+/MediaBox [0 0 841.896 595.296]
+/Contents 5 0 R
+/Annots 26 0 R>>
+endobj
+28 0 obj
+<</S /GoTo /D [27 0 R /Fit]
+>>
+endobj
+31 0 obj
+<</S /GoTo /D [27 0 R /FitR 402 235 465 153]
+>>
+endobj
+33 0 obj
+<</S /GoTo /D [27 0 R /FitR 440 181 522 128]
+>>
+endobj
+35 0 obj
+<</S /GoTo /D [27 0 R /FitR 406 173 460 137]
+>>
+endobj
+37 0 obj
+<</S /GoTo /D [27 0 R /FitR 394 463 447 218]
+>>
+endobj
+39 0 obj
+<</S /GoTo /D [27 0 R /FitR 336 298 399 244]
+>>
+endobj
+41 0 obj
+<</S /GoTo /D [27 0 R /FitR 398 290 439 235]
+>>
+endobj
+43 0 obj
+<</S /GoTo /D [27 0 R /FitR 431 256 471 201]
+>>
+endobj
+45 0 obj
+<</S /GoTo /D [27 0 R /FitR 466 463 519 218]
+>>
+endobj
+47 0 obj
+<</S /GoTo /D [27 0 R /FitR 431 292 469 236]
+>>
+endobj
+49 0 obj
+<</S /GoTo /D [27 0 R /FitR 440 268 522 215]
+>>
+endobj
+51 0 obj
+<</S /GoTo /D [27 0 R /FitR 348 269 384 211]
+>>
+endobj
+53 0 obj
+<</S /GoTo /D [27 0 R /FitR 336 366 399 312]
+>>
+endobj
+55 0 obj
+<</S /GoTo /D [27 0 R /FitR 320 178 434 125]
+>>
+endobj
+57 0 obj
+<</S /GoTo /D [27 0 R /FitR 373 269 410 211]
+>>
+endobj
+59 0 obj
+<</S /GoTo /D [27 0 R /FitR 399 258 436 202]
+>>
+endobj
+61 0 obj
+<</S /GoTo /D [27 0 R /FitR 336 332 399 278]
+>>
+endobj
+63 0 obj
+<</S /GoTo /D [27 0 R /FitR 320 243 434 190]
+>>
+endobj
+65 0 obj
+<</S /GoTo /D [27 0 R /FitR 451 290 519 237]
+>>
+endobj
+67 0 obj
+<</S /GoTo /D [27 0 R /FitR 324 438 427 339]
+>>
+endobj
+69 0 obj
+<< /BaseFont /Helvetica
+   /Type /Font
+   /Subtype /Type1
+   /Encoding /WinAnsiEncoding
+>>
+endobj
+70 0 obj
+<< /BaseFont /Helvetica-Oblique
+   /Type /Font
+   /Subtype /Type1
+   /Encoding /WinAnsiEncoding
+>>
+endobj
+71 0 obj
+<< /BaseFont /Helvetica-Bold
+   /Type /Font
+   /Subtype /Type1
+   /Encoding /WinAnsiEncoding
+>>
+endobj
+72 0 obj
+<< /BaseFont /Helvetica-BoldOblique
+   /Type /Font
+   /Subtype /Type1
+   /Encoding /WinAnsiEncoding
+>>
+endobj
+2 0 obj
+<<
+    /KicadFont 69 0 R
+    /KicadFontI 70 0 R
+    /KicadFontB 71 0 R
+    /KicadFontBI 72 0 R
+>>
+endobj
+3 0 obj
+<<
+>>
+endobj
+7 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [418.11 178.249 449.433 209.033]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J8"],
+["Value = Conn_01x02"],
+["Footprint = TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal"],
+["Description = Generic connector, single row, 01x02, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+8 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [466.569 150.044 498.458 160.39]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J5"],
+["Value = Conn_01x04"],
+["Footprint = PinHeader_1x04_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x04, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+9 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [420.123 151.603 447.194 164.501]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = SW5"],
+["Value = SW_SPDT"],
+["Footprint = Schiebeschalter_SS-12D00"],
+["Description = Switch, single pole double throw"],
+]\);) >>
+>>
+endobj
+10 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [416.126 286.107 426.331 397.083]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J2"],
+["Value = Conn_01x15"],
+["Footprint = PinSocket_1x15_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x15, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+11 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [357.094 257.902 378.496 284.973]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = SW1"],
+["Value = SW_Push"],
+["Footprint = SW_PUSH_6mm_H5mm"],
+["Description = Push button switch, generic, two pins"],
+]\);) >>
+>>
+endobj
+12 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [413.787 249.087 422.433 276.781]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = R2"],
+["Value = 330"],
+["Footprint = R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"],
+["Description = Resistor"],
+]\);) >>
+>>
+endobj
+13 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [446.386 215.071 455.031 242.765]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = R3"],
+["Value = 100k"],
+["Footprint = R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"],
+["Description = Resistor"],
+]\);) >>
+>>
+endobj
+14 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [488.126 286.107 498.331 397.083]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J1"],
+["Value = Conn_01x15"],
+["Footprint = PinSocket_1x15_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x15, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+15 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [446.386 250.504 455.031 278.198]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = R4"],
+["Value = 100k"],
+["Footprint = R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"],
+["Description = Resistor"],
+]\);) >>
+>>
+endobj
+16 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [466.569 236.444 498.458 246.79]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J6"],
+["Value = Conn_01x04"],
+["Footprint = PinHeader_1x04_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x04, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+17 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [357.265 230.378 375.633 248.718]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = D2"],
+["Value = LED"],
+["Footprint = LED_D5.0mm"],
+["Description = Light emitting diode"],
+]\);) >>
+>>
+endobj
+18 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [357.094 325.934 378.496 353.005]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = SW3"],
+["Value = SW_Push"],
+["Footprint = SW_PUSH_6mm_H5mm"],
+["Description = Push button switch, generic, two pins"],
+]\);) >>
+>>
+endobj
+19 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [354.331 147.209 400.677 157.556]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J4"],
+["Value = Conn_01x06"],
+["Footprint = PinHeader_1x06_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x06, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+20 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [382.663 230.378 401.031 248.718]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = D1"],
+["Value = LED"],
+["Footprint = LED_D5.0mm"],
+["Description = Light emitting diode"],
+]\);) >>
+>>
+endobj
+21 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [413.787 216.488 422.433 244.183]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = R1"],
+["Value = 330"],
+["Footprint = R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"],
+["Description = Resistor"],
+]\);) >>
+>>
+endobj
+22 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [357.094 291.918 378.496 318.989]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = SW2"],
+["Value = SW_Push"],
+["Footprint = SW_PUSH_6mm_H5mm"],
+["Description = Push button switch, generic, two pins"],
+]\);) >>
+>>
+endobj
+23 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [354.331 212.009 400.677 222.356]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J3"],
+["Value = Conn_01x06"],
+["Footprint = PinHeader_1x06_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x06, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+24 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [472.394 258.469 497.055 268.816]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = J7"],
+["Value = Conn_01x03"],
+["Footprint = PinHeader_1x03_P2.54mm_Vertical"],
+["Description = Generic connector, single row, 01x03, script generated \\u0028kicad-library-utils/schlib/autogen/connector/\\u0029"],
+]\);) >>
+>>
+endobj
+25 0 obj
+<<
+/Type /Annot
+/Subtype /Link
+/Rect [356.528 364.202 396.921 413.95]
+/Border [16 16 0]
+/A << /Type /Action /S /JavaScript /JS (ShM\([
+["Reference designator = SW4"],
+["Value = RotaryEncoder_Switch"],
+["Footprint = RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"],
+["Description = Rotary encoder, dual channel, incremental quadrate outputs, with switch"],
+]\);) >>
+>>
+endobj
+4 0 obj
+<< /JavaScript
+ << /Names
+    [ (JSInit) << /Type /Action /S /JavaScript /JS (
+function ShM\(aEntries\) {
+    var aParams = [];
+    for \(var i in aEntries\) {
+        aParams.push\({
+            cName: aEntries[i][0],
+            cReturn: aEntries[i][1]
+        }\)
+    }
+
+    var cChoice = app.popUpMenuEx.apply\(app, aParams\);
+    if \(cChoice != null && cChoice.substring\(0, 1\) == '#'\) this.pageNum = parseInt\(cChoice.slice\(1\)\);
+    else if \(cChoice != null && cChoice.substring\(0, 4\) == 'http'\) app.launchURL\(cChoice\);
+    else if \(cChoice != null && cChoice.substring\(0, 4\) == 'file'\) app.openDoc\(cChoice.substring\(7\)\);
+}
+) >> ]
+ >>
+>>
+endobj
+1 0 obj
+<<
+/Type /Pages
+/Kids [
+27 0 R
+]
+/Count 1
+>>
+endobj
+73 0 obj
+<<
+/Producer (KiCad PDF)
+/CreationDate (D:20260602163303)
+/Creator (PCBNEW)
+/Title (controlador_multimedia-Edge_Cuts.pdf)
+>>
+endobj
+58 0 obj
+<<
+/Title (D1)
+/Parent 30 0 R
+/Next 52 0 R
+/A 57 0 R
+>>
+endobj
+52 0 obj
+<<
+/Title (D2)
+/Parent 30 0 R
+/Next 46 0 R
+/Prev 58 0 R
+/A 51 0 R
+>>
+endobj
+46 0 obj
+<<
+/Title (J1)
+/Parent 30 0 R
+/Next 38 0 R
+/Prev 52 0 R
+/A 45 0 R
+>>
+endobj
+38 0 obj
+<<
+/Title (J2)
+/Parent 30 0 R
+/Next 64 0 R
+/Prev 46 0 R
+/A 37 0 R
+>>
+endobj
+64 0 obj
+<<
+/Title (J3)
+/Parent 30 0 R
+/Next 56 0 R
+/Prev 38 0 R
+/A 63 0 R
+>>
+endobj
+56 0 obj
+<<
+/Title (J4)
+/Parent 30 0 R
+/Next 34 0 R
+/Prev 64 0 R
+/A 55 0 R
+>>
+endobj
+34 0 obj
+<<
+/Title (J5)
+/Parent 30 0 R
+/Next 50 0 R
+/Prev 56 0 R
+/A 33 0 R
+>>
+endobj
+50 0 obj
+<<
+/Title (J6)
+/Parent 30 0 R
+/Next 66 0 R
+/Prev 34 0 R
+/A 49 0 R
+>>
+endobj
+66 0 obj
+<<
+/Title (J7)
+/Parent 30 0 R
+/Next 32 0 R
+/Prev 50 0 R
+/A 65 0 R
+>>
+endobj
+32 0 obj
+<<
+/Title (J8)
+/Parent 30 0 R
+/Next 60 0 R
+/Prev 66 0 R
+/A 31 0 R
+>>
+endobj
+60 0 obj
+<<
+/Title (R1)
+/Parent 30 0 R
+/Next 42 0 R
+/Prev 32 0 R
+/A 59 0 R
+>>
+endobj
+42 0 obj
+<<
+/Title (R2)
+/Parent 30 0 R
+/Next 44 0 R
+/Prev 60 0 R
+/A 41 0 R
+>>
+endobj
+44 0 obj
+<<
+/Title (R3)
+/Parent 30 0 R
+/Next 48 0 R
+/Prev 42 0 R
+/A 43 0 R
+>>
+endobj
+48 0 obj
+<<
+/Title (R4)
+/Parent 30 0 R
+/Next 40 0 R
+/Prev 44 0 R
+/A 47 0 R
+>>
+endobj
+40 0 obj
+<<
+/Title (SW1)
+/Parent 30 0 R
+/Next 62 0 R
+/Prev 48 0 R
+/A 39 0 R
+>>
+endobj
+62 0 obj
+<<
+/Title (SW2)
+/Parent 30 0 R
+/Next 54 0 R
+/Prev 40 0 R
+/A 61 0 R
+>>
+endobj
+54 0 obj
+<<
+/Title (SW3)
+/Parent 30 0 R
+/Next 68 0 R
+/Prev 62 0 R
+/A 53 0 R
+>>
+endobj
+68 0 obj
+<<
+/Title (SW4)
+/Parent 30 0 R
+/Next 36 0 R
+/Prev 54 0 R
+/A 67 0 R
+>>
+endobj
+36 0 obj
+<<
+/Title (SW5)
+/Parent 30 0 R
+/Prev 68 0 R
+/A 35 0 R
+>>
+endobj
+30 0 obj
+<<
+/Title (Footprints)
+/Parent 29 0 R
+/Count -19
+/First 58 0 R
+/Last 36 0 R
+/A 28 0 R
+>>
+endobj
+29 0 obj
+<<
+/Title (Page 1)
+/Parent 74 0 R
+/Count -1
+/First 30 0 R
+/Last 30 0 R
+/A 28 0 R
+>>
+endobj
+74 0 obj
+<< /Type /Outlines
+   /Count 21
+   /First 29 0 R
+   /Last 29 0 R
+>>
+endobj
+75 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/Version /1.5
+/PageMode /UseOutlines
+/Outlines 74 0 R
+/Names 4 0 R
+/PageLayout /SinglePage
+>>
+endobj
+xref
+0 76
+0000000000 65535 f 
+0000009762 00000 n 
+0000002309 00000 n 
+0000002422 00000 n 
+0000009083 00000 n 
+0000000015 00000 n 
+0000000222 00000 n 
+0000002443 00000 n 
+0000002868 00000 n 
+0000003268 00000 n 
+0000003578 00000 n 
+0000003980 00000 n 
+0000004288 00000 n 
+0000004594 00000 n 
+0000004901 00000 n 
+0000005303 00000 n 
+0000005610 00000 n 
+0000006011 00000 n 
+0000006291 00000 n 
+0000006599 00000 n 
+0000007001 00000 n 
+0000007281 00000 n 
+0000007587 00000 n 
+0000007895 00000 n 
+0000008297 00000 n 
+0000008699 00000 n 
+0000000241 00000 n 
+0000000389 00000 n 
+0000000593 00000 n 
+0000011662 00000 n 
+0000011557 00000 n 
+0000000640 00000 n 
+0000010715 00000 n 
+0000000704 00000 n 
+0000010460 00000 n 
+0000000768 00000 n 
+0000011484 00000 n 
+0000000832 00000 n 
+0000010205 00000 n 
+0000000896 00000 n 
+0000011140 00000 n 
+0000000960 00000 n 
+0000010885 00000 n 
+0000001024 00000 n 
+0000010970 00000 n 
+0000001088 00000 n 
+0000010120 00000 n 
+0000001152 00000 n 
+0000011055 00000 n 
+0000001216 00000 n 
+0000010545 00000 n 
+0000001280 00000 n 
+0000010035 00000 n 
+0000001344 00000 n 
+0000011312 00000 n 
+0000001408 00000 n 
+0000010375 00000 n 
+0000001472 00000 n 
+0000009963 00000 n 
+0000001536 00000 n 
+0000010800 00000 n 
+0000001600 00000 n 
+0000011226 00000 n 
+0000001664 00000 n 
+0000010290 00000 n 
+0000001728 00000 n 
+0000010630 00000 n 
+0000001792 00000 n 
+0000011398 00000 n 
+0000001856 00000 n 
+0000001963 00000 n 
+0000002078 00000 n 
+0000002190 00000 n 
+0000009822 00000 n 
+0000011762 00000 n 
+0000011846 00000 n 
+trailer
+<< /Size 76 /Root 75 0 R /Info 73 0 R >>
+startxref
+11987
+%%EOF

@@ -16,8 +16,8 @@
 #define PIN_ENCODER_SW   21  /**< Pulsador del encoder    */
 
 /* LEDs de estado */
-#define PIN_LED_AZUL     26  /**< Estado Bluetooth        */
-#define PIN_LED_ROJO     27  /**< Estado batería          */
+#define PIN_LED_AZUL     32  /**< Estado Bluetooth        */
+#define PIN_LED_ROJO     33  /**< Estado batería          */
 
 /* ADC */
 #define PIN_ADC_BATERIA  34  /**< GPIO del divisor resistivo de batería — ADC1_CH6 */
