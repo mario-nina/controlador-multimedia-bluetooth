@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/mario-nina/controlador-multimedia-bluetooth/actions/workflows/ci.yml/badge.svg)
 ![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
-![Versión](https://img.shields.io/badge/versión-v0.1.0-blue)
+![Versión](https://img.shields.io/badge/versión-v0.2.0-blue)
 ![Licencia](https://img.shields.io/badge/licencia-MIT-green)
 
 Controlador multimedia inalámbrico portátil basado en ESP32 que permite gestionar la reproducción de audio en una computadora mediante comunicación Bluetooth.
@@ -41,9 +41,9 @@ Desarrollado como proyecto de la materia Sistemas Embebidos II de la carrera de 
 - Control de volumen: Incremento y Decremento
 - Silenciamiento: Mute/Unmute
 - Comunicación inalámbrica mediante Bluetooth HID
-- Operación autónoma mediante batería LiPo recargable
+- Operación autónoma mediante batería Li-ion recargable
 - Indicadores visuales de estado de conexión y batería
-- Gestión energética con modos de bajo consumo
+- Gestión energética con modem sleep y escalado dinámico de frecuencia CPU
 
 ---
 
@@ -54,11 +54,13 @@ Desarrollado como proyecto de la materia Sistemas Embebidos II de la carrera de 
 | Componente | Especificación |
 |------------|----------------|
 | Microcontrolador | ESP32 WROOM-32 (DevKit 30 pines) |
-| Batería | LiPo 3.7V 500mAh |
-| Módulo de carga | TP4056 con protección |
+| Batería | Li-ion 18650 3.7V 2600mAh |
+| Módulo de carga | TP4056 USB-C con protección |
+| Boost converter | MT3608 |
 | Regulador | AMS1117-3.3V |
-| Interfaz de usuario | Encoder rotativo + 3 botones |
-| Indicadores | LED azul (Bluetooth), LED rojo (batería) |
+| Encoder rotativo | Alps EC11 |
+| Botones | 3 pulsadores táctiles |
+| Indicadores | LED azul (Bluetooth — GPIO32), LED rojo (batería — GPIO33) |
 
 ### Software
 
@@ -71,7 +73,7 @@ Desarrollado como proyecto de la materia Sistemas Embebidos II de la carrera de 
 | Python | 3.12.3 |
 | CMake | 3.28.3 |
 | Git | 2.43.0 |
-| IDE | Espressif IDE 4.2.0 |
+
 ---
 
 ## Instalación
@@ -114,7 +116,7 @@ idf.py flash monitor
 1. Encender el dispositivo.
 2. En la laptop, activar Bluetooth y buscar dispositivos disponibles.
 3. Emparejar con el dispositivo **"Controlador Multimedia"**.
-4. Una vez conectado (LED azul fijo), usar los controles:
+4. Una vez conectado, usar los controles:
 
 | Control | Función |
 |---------|---------|
@@ -125,38 +127,52 @@ idf.py flash monitor
 | Botón 2 | Pista anterior |
 | Botón 3 | Mute/Unmute |
 
+### Indicadores visuales
+
+| LED | Estado | Significado |
+|-----|--------|-------------|
+| Azul | Parpadeo rápido | Sin conexión BLE — advertising |
+| Azul | Apagado | Conexión BLE activa |
+| Rojo | Apagado | Batería OK (>= 3400mV) |
+| Rojo | Parpadeo lento | Batería baja (< 3400mV) |
+| Rojo | Parpadeo rápido | Batería crítica (< 3200mV) |
+
 ---
 
 ## Estructura del proyecto
-
-```
 controlador-multimedia-bluetooth/
-├── firmware/                     # Código fuente del firmware (ESP-IDF)
-│   ├── main/                     # Punto de entrada de la aplicación
-│   └── components/               # Módulos independientes
-│       ├── comunicacion_bt/      # Stack NimBLE + perfil HID Consumer Control
-│       ├── control_leds/         # Patrones de LEDs via esp_timer
-│       ├── driver_entrada/       # Botones (ISR) + encoder rotativo (PCNT)
-│       └── gestion_energia/      # Gestión de energía — pendiente Fase 10
-├── hardware/                     # Archivos de diseño de hardware
-│   ├── controlador_multimedia/   # Proyecto KiCad (esquemático + PCB)
-│   ├── esquematico/              # Exportaciones del esquemático (PDF/SVG)
-│   ├── pcb/                      # Exportaciones Gerber — pendiente Fase 12
-│   ├── diseno_3d/                # Exportaciones STEP — pendiente Fase 12
-│   └── pines.md                  # Asignación de pines con justificación técnica
-├── docs/                         # Documentación técnica
-│   ├── memoria_tecnica/          # Memoria técnica del proyecto
-│   ├── manual_usuario/           # Manual de usuario — pendiente Fase 12
-│   └── lista_materiales/         # Lista de materiales — pendiente Fase 12
-├── test/                         # Pruebas y validación
-│   └── resultados/               # Resultados de pruebas físicas por fase
+├── firmware/                          # Código fuente del firmware (ESP-IDF)
+│   ├── main/                          # Punto de entrada de la aplicación
+│   │   └── firmware.c
+│   └── components/                    # Módulos independientes
+│       ├── common/                    # Configuración global del sistema
+│       │   └── include/
+│       │       ├── config.h           # Constantes de configuración del sistema
+│       │       └── pines.h            # Mapa de asignación de pines GPIO
+│       ├── comunicacion_bt/           # Stack NimBLE + perfil HID Consumer Control
+│       ├── control_leds/              # Patrones de LEDs via esp_timer
+│       ├── driver_entrada/            # Botones (ISR) + encoder rotativo (PCNT)
+│       └── gestion_energia/           # Monitoreo ADC batería + modem sleep
+├── hardware/                          # Archivos de diseño de hardware
+│   ├── kicad/                         # Proyecto KiCad (esquemático + PCB)
+│   ├── exportaciones/                 # Archivos exportados desde KiCad
+│   │   ├── esquematico/               # PDF y SVG del esquemático
+│   │   ├── gerbers/                   # Archivos Gerber para fabricación
+│   │   └── step/                      # Modelos 3D de la carcasa
+│   └── pines.md                       # Asignación de pines con justificación técnica
+├── docs/                              # Documentación técnica
+│   ├── memoria_tecnica/               # Memoria técnica del proyecto (entrega académica)
+│   ├── diseno_pcb.md                  # Decisiones de diseño PCB con justificación
+│   ├── manual_usuario/                # Manual de usuario
+│   └── lista_materiales/             # Lista de materiales con especificaciones y costos
+├── test/                              # Pruebas y validación
+│   └── resultados/                    # Resultados de pruebas documentadas
 ├── CHANGELOG.md
-├── CONVENTIONS.md
 ├── CONTRIBUTING.md
+├── CONVENTIONS.md
 ├── LICENSE
 ├── ROADMAP.md
 └── README.md
-```
 
 ---
 
@@ -164,12 +180,12 @@ controlador-multimedia-bluetooth/
 
 El sistema se compone de cuatro subsistemas principales:
 
-- **Interfaz de usuario** — encoder rotativo y tres botones para generación de comandos
+- **Interfaz de usuario** — encoder rotativo Alps EC11 y tres botones táctiles para generación de comandos
 - **Microcontrolador** — ESP32 WROOM-32 como unidad central de procesamiento
-- **Sistema de alimentación** — batería LiPo con módulo TP4056 y regulador AMS1117-3.3V
-- **Indicadores de estado** — LED azul para Bluetooth y LED rojo para batería
+- **Sistema de alimentación** — batería Li-ion 18650 → TP4056 (carga USB-C) → MT3608 (boost) → AMS1117-3.3V
+- **Indicadores de estado** — LED azul (GPIO32) para Bluetooth y LED rojo (GPIO33) para batería
 
-Los archivos de esquemático y PCB se encuentran en la carpeta `hardware/`.
+Los archivos de diseño se encuentran en `hardware/kicad/` y las exportaciones en `hardware/exportaciones/`.
 
 ---
 
@@ -177,22 +193,27 @@ Los archivos de esquemático y PCB se encuentran en la carpeta `hardware/`.
 
 Desarrollado en C mediante ESP-IDF v6.0.1 con arquitectura basada en FreeRTOS.
 
-La arquitectura implementa separación de responsabilidades en tareas independientes:
+Separación de responsabilidades en componentes independientes:
 
-- Gestión de entrada de usuario
-- Procesamiento de comandos multimedia
-- Comunicación Bluetooth HID
-- Gestión de energía
+| Componente | Responsabilidad |
+|------------|-----------------|
+| `common` | Configuración global — `config.h` y `pines.h` |
+| `driver_entrada` | Lectura de botones (ISR + debounce) y encoder (PCNT) |
+| `comunicacion_bt` | Stack NimBLE, advertising, perfil HID Consumer Control |
+| `control_leds` | Patrones de iluminación via esp_timer |
+| `gestion_energia` | Monitoreo ADC batería y modem sleep via esp_pm |
 
 ---
 
 ## Documentación
 
-La documentación técnica completa se encuentra en la carpeta `docs/`:
-
-- `memoria_tecnica/` — memoria técnica del proyecto en formato LaTeX
-- `manual_usuario/` — instrucciones de operación y emparejamiento
-- `lista_materiales/` — componentes con especificaciones técnicas y costos
+| Documento | Ubicación | Descripción |
+|-----------|-----------|-------------|
+| Asignación de pines | `hardware/pines.md` | Pines GPIO con justificación técnica y restricciones del ESP32 |
+| Decisiones de diseño PCB | `docs/diseno_pcb.md` | Criterios técnicos aplicados en el diseño del PCB |
+| Memoria técnica | `docs/memoria_tecnica/` | Documento académico de descripción del proyecto |
+| Historial de cambios | `CHANGELOG.md` | Registro de cambios por versión |
+| Roadmap | `ROADMAP.md` | Estado actual y tareas pendientes por área |
 
 ---
 
