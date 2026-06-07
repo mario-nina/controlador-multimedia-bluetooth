@@ -11,9 +11,9 @@ Refleja el estado actual del proyecto y las tareas pendientes por área de traba
 |------|--------|
 | Firmware | ✓ Completo |
 | Hardware — esquemático | ✓ Completo |
-| Hardware — PCB | En curso |
-| Hardware — diseño 3D | En curso |
-| Pruebas | Pendiente |
+| Hardware — PCB | ✓ Completo |
+| Hardware — diseño 3D | ✓ Completo |
+| Pruebas | En curso |
 | Documentación | En curso |
 
 ---
@@ -33,7 +33,7 @@ Refleja el estado actual del proyecto y las tareas pendientes por área de traba
 | Gestión de energía — modem sleep via esp_pm | ✓ |
 | Arquitectura de componentes refactorizada — config.h, buenas prácticas | ✓ |
 | Validación funcional con fuente de voltaje | ✓ |
-| Validación funcional con batería real | Pendiente |
+| Validación funcional con batería real | ✓ |
 
 ---
 
@@ -58,33 +58,36 @@ Refleja el estado actual del proyecto y las tareas pendientes por área de traba
 |-------|--------|
 | Importar netlist desde esquemático | ✓ |
 | Placement de componentes | ✓ |
-| Ruteo de señales | En curso |
+| Ruteo de señales | ✓ |
 | Plano de GND | ✓ |
-| Keepout de antena ESP32 WROOM-32 | — |
 | Silkscreen con etiquetas y versión | ✓ |
-| DRC sin errores | Pendiente |
+| DRC sin errores | ✓ |
 | Exportación de Gerbers | ✓ |
+| Fabricación física | ✓ |
 
 ### Diseño 3D
 
 | Tarea | Estado |
 |-------|--------|
-| Modelo inicial de carcasa | En curso |
-| Verificación de medidas contra PCB | Pendiente |
-| Verificación de acceso a conectores USB y botones | Pendiente |
-| Exportación STEP | Pendiente |
+| Modelo de carcasa | ✓ |
+| Verificación de medidas contra PCB | ✓ |
+| Verificación de acceso a conectores USB y botones | ✓ |
+| Exportación STEP | ✓ |
+| Impresión 3D | Pendiente |
 
 ---
 
 ## Pruebas
 
-> Las pruebas formales están por definirse. Esta sección se completará
-> cuando se establezca el protocolo de pruebas definitivo.
-
 | Prueba | Estado |
 |--------|--------|
 | Integración completa — 6 comandos end-to-end con Spotify | ✓ |
-| Pruebas formales del sistema | Pendiente |
+| Protocolo de pruebas formales definido | ✓ |
+| Prueba 1 — Alcance BLE | Pendiente |
+| Prueba 2 — Latencia | Pendiente |
+| Prueba 3 — Autonomía de batería | Pendiente |
+| Prueba 4 — Confiabilidad | Pendiente |
+| Prueba 5 — Compatibilidad | Pendiente |
 
 ---
 
@@ -96,9 +99,9 @@ Refleja el estado actual del proyecto y las tareas pendientes por área de traba
 | Asignación de pines con justificación técnica | ✓ |
 | Decisiones de diseño PCB | ✓ |
 | Memoria técnica del proyecto (entrega académica) | ✓ |
+| Lista de materiales con especificaciones y costos | ✓ |
+| Manual de usuario | ✓ |
 | Documentación técnica del sistema | Pendiente |
-| Lista de materiales con especificaciones y costos | Pendiente |
-| Manual de usuario | Pendiente |
 
 ---
 
@@ -108,9 +111,9 @@ Refleja el estado actual del proyecto y las tareas pendientes por área de traba
 |------|-------------|--------|
 | MVP firmware | 6 comandos funcionando end-to-end desde hardware hasta Ubuntu via BLE HID | ✓ Logrado |
 | Esquemático completo | ERC sin errores, huellas y modelos 3D asignados | ✓ Logrado |
-| PCB fabricable | DRC sin errores, Gerbers exportados | En curso |
+| PCB fabricada | DRC sin errores, Gerbers exportados, PCB física lista | ✓ Logrado |
 | Sistema validado | Pruebas formales documentadas con batería real | Pendiente |
-| Entrega final | PCB, documentación técnica y manual de usuario completos | Pendiente |
+| Entrega final | Pruebas formales y documentación técnica completa | Pendiente |
 
 ---
 
