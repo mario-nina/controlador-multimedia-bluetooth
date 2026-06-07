@@ -1,3 +1,23 @@
+# Manual de usuario — Controlador Multimedia Bluetooth v1.0
+
+Guía de operación del controlador multimedia inalámbrico basado en ESP32.
+
+---
+
+## Descripción del dispositivo
+
+El controlador multimedia permite gestionar la reproducción de audio en una
+computadora mediante comunicación Bluetooth, sin requerir interacción física
+directa con la misma.
+
+---
+
+## Disposición de controles
+┌─────────────────────────────────────────┐
+│  [ENC]  [PREV]  [NEXT]  [MUTE] 🔵🔴  [SW] │
+│                                    [USB] │
+└─────────────────────────────────────────┘
+
 | Elemento | Descripción |
 |----------|-------------|
 | ENC | Encoder rotativo — control de volumen y Play/Pause |
