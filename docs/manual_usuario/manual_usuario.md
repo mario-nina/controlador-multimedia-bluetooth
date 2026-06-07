@@ -13,22 +13,18 @@ directa con la misma.
 ---
 
 ## Disposición de controles
-┌─────────────────────────────────────────┐
-│  [ENC]  [PREV]  [NEXT]  [MUTE] 🔵🔴  [SW] │
-│                                    [USB] │
-└─────────────────────────────────────────┘
 
-| Elemento | Descripción |
-|----------|-------------|
-| ENC | Encoder rotativo — control de volumen y Play/Pause |
-| PREV | Botón pista anterior |
-| NEXT | Botón siguiente pista |
-| MUTE | Botón Mute/Unmute |
-| 🔵 | LED azul — estado Bluetooth |
-| 🔴 | LED rojo — estado batería |
-| SW | Interruptor de encendido/apagado |
-| USB | Puerto de carga USB-C |
+De izquierda a derecha:
 
+| Posición | Elemento | Descripción |
+|----------|----------|-------------|
+| 1 | ENC | Encoder rotativo — control de volumen y Play/Pause |
+| 2 | PREV | Botón pista anterior |
+| 3 | NEXT | Botón siguiente pista |
+| 4 | MUTE | Botón Mute/Unmute |
+| 5 | 🔵 🔴 | LEDs de estado — Bluetooth y batería |
+| 6 | SW | Interruptor de encendido/apagado |
+| — | USB | Puerto de carga USB-C — parte inferior derecha |
 ---
 
 ## Encendido y apagado
